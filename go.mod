@@ -12,6 +12,7 @@ require (
 	github.com/stretchr/testify v1.3.0
 )
 
-replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => ../keyring
+//replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => ../keyring
+replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => github.com/joemiller/keyring v0.0.0-20190624143912-5880c96e711d
 
 // replace github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c => ../go-libsecret
