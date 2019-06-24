@@ -1,0 +1,52 @@
+builds:
+-
+  ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+  goos:
+    - linux
+    - darwin
+    - windows
+    - freebsd
+    - openbsd
+    - dragonfly
+    - netbsd
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
+  ignore:
+    - goos: darwin
+      goarch: 386
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+archives:
+  - id: vault-token-helper
+    format: binary
+    replacements:
+      386: i386
+
+brew:
+  github:
+    owner: joemiller
+    name: homebrew-taps
+  commit_author:
+    name: goreleaser
+    email: goreleaser@joemiller.me
+  folder: Formula
+  homepage: "https://github.com/joemiller/vault-token-helper"
+  description: "Cross-platform @hashicorp Vault token helper with support for multiple storage backends"
+  caveats: |
+    You need to set a path to the token helper in your ~/.vault file.
+    Run the following to create the ~/.vault file:
+
+    echo "token_helper = \\"$(brew --prefix joemiller/taps/vault-token-helper)/bin/vault-token-helper\\"" > ~/.vault
+

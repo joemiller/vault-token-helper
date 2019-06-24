@@ -1,0 +1,8 @@
+dist/
+vault-token-helper
+vendor/
+Attic/
+.vscode/
+cover.out
+.vagrant
+vault-token-helper.exe
