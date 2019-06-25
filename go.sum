@@ -1,4 +1,6 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e h1:h6+08J/q6jI5hE3wnbGFJlbAS0zPaP5JJ7r+X6c3+9Q=
+github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e/go.mod h1:qVCfjMddwdzjgy848stNe9eTPmovvxF1lhJvOD6LUEo=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
@@ -62,6 +64,8 @@ github.com/joemiller/keyring v0.0.0-20190531235905-5880c96e711d6e10a5bb9c4c831f0
 github.com/joemiller/keyring v0.0.0-20190531235905-5880c96e711d6e10a5bb9c4c831f0a8145344c8b/go.mod h1:qVCfjMddwdzjgy848stNe9eTPmovvxF1lhJvOD6LUEo=
 github.com/joemiller/keyring v0.0.0-20190624143912-5880c96e711d h1:ykZeBUT9X1gmV6tv8kE5Phka4EHw03Vn39+d6/Bmsq8=
 github.com/joemiller/keyring v0.0.0-20190624143912-5880c96e711d/go.mod h1:qVCfjMddwdzjgy848stNe9eTPmovvxF1lhJvOD6LUEo=
+github.com/joemiller/keyring v0.0.0-20190624143912-83f5f71e04d29a7c209cd71d23c27a3f29d12178 h1:NVRFR7ntAvVKbRsfgdeEC3ZRvmU/z/FWf97sTpYvnEY=
+github.com/joemiller/keyring v0.0.0-20190624143912-83f5f71e04d29a7c209cd71d23c27a3f29d12178/go.mod h1:qVCfjMddwdzjgy848stNe9eTPmovvxF1lhJvOD6LUEo=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/keybase/go-keychain v0.0.0-20190423185029-8441f7257eb1 h1:ClrUvxpmRAr0TdWbWxApjTTjAQ9W2u4N4bJxHQTpwuE=

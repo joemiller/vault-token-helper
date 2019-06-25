@@ -41,6 +41,9 @@ SHELL
   # kwallet
   config.vm.provision "shell", inline: "sudo dnf install -y kwalletmanager5"
 
+  # pass
+  config.vm.provision "shell", inline: "sudo dnf install -y pass"
+
   config.vm.provision "shell", inline: <<-SHELL
     sudo rpm --import https://mirror.go-repo.io/fedora/RPM-GPG-KEY-GO-REPO
     curl -s https://mirror.go-repo.io/fedora/go-repo.repo | sudo tee /etc/yum.repos.d/go-repo.repo

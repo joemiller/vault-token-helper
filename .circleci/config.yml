@@ -1,13 +1,19 @@
 ---
 version: 2.1
 
+## -- executors
 executors:
-  go-build:
+  linux:
     docker:
       - image: circleci/golang:1.12
     environment:
       GOPROXY: https://proxy.golang.org
 
+  macos:
+    macos:
+      xcode: "10.2.0"
+
+## -- re-usable commands
 commands:
   save-go-mod-cache:
     steps:
@@ -34,21 +40,28 @@ commands:
       - attach_workspace:
           at: .
 
+## -- jobs
 jobs:
-  test:
-    executor: go-build
+  test-macos:
+    executor: macos
+    steps:
+      - checkout
+      - run: make test
+
+  test-linux:
+    executor: linux
     steps:
       - checkout
       - restore-go-mod-cache
       # run tasks
-      - run: sudo apt -qy install gpgv2
+      - run: sudo apt -qy install pass
       - run: make test
       # persist cache for future builds, save current directory to workspace for persisting to next job
       - save-go-mod-cache
       - save-workspace
 
   release:
-    executor: go-build
+    executor: linux
     steps:
       - restore-workspace
       - restore-go-mod-cache
@@ -62,14 +75,17 @@ jobs:
       - run: ~/autotag
       - run: curl -sL https://git.io/goreleaser | bash -s -- --parallelism=2
 
+## -- workflows
 workflows:
   version: 2
   main:
     jobs:
-      - test
+      - test-linux
+      - test-macos
       - release:
           requires:
-            - test
+            - test-linux
+            - test-macos
           filters:
             branches:
               only:

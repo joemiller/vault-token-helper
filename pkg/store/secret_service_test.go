@@ -17,6 +17,8 @@ func TestSecretServiceStore(t *testing.T) {
 		LibSecretCollectionName:  "test",
 		AllowedBackends:          []keyring.BackendType{keyring.SecretServiceBackend},
 	})
+	assert.Nil(t, err)
+	assert.NotNil(t, st)
 
 	// should be empty
 	tokens, err := st.List()

@@ -70,7 +70,7 @@ func (s *Store) Get(vaultAddr string) (Token, error) {
 	}
 
 	t := Token{
-		VaultAddr: vaultAddr,
+		VaultAddr: decodeVaultAddr(vaultAddr),
 		Token:     string(i.Data),
 	}
 	return t, nil

@@ -16,6 +16,8 @@ func TestKeychainStore(t *testing.T) {
 		KeychainTrustApplication: true,
 		AllowedBackends:          []keyring.BackendType{keyring.KeychainBackend},
 	})
+	assert.Nil(t, err)
+	assert.NotNil(t, st)
 
 	// should be empty
 	tokens, err := st.List()

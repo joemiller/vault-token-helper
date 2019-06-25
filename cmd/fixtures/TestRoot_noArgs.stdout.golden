@@ -5,6 +5,7 @@ Usage:
 
 Available Commands:
   backends    List the available backends on the current platform
+  enable      Enable the vault-token-helper by (over)writing the ~/.vault config file
   help        Help about any command
   list        List tokens
   version     Print version
