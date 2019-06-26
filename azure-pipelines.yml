@@ -1,0 +1,57 @@
+# trigger:
+# - master
+
+# pool:
+#   vmImage: 'ubuntu-latest'
+
+# steps:
+# - script: echo Hello, world!
+#   displayName: 'Run a one-line script'
+
+# - script: |
+#     echo Add other tasks to build, test, and deploy your project.
+#     echo See https://aka.ms/yaml
+#   displayName: 'Run a multi-line script'
+
+resources:
+  containers:
+  - container: linux
+    image: golang:1.12
+
+stages:
+  # - stage: build
+  #   jobs:
+  #   - job: build
+  #     steps:
+  #     - script: echo Building!
+
+  - stage: test
+    jobs:
+    - job: test_linux
+      container: linux
+      steps:
+      - script: pwd
+      - script: go get
+      - script: make test
+
+    - job: test_macos
+      pool:
+        vmImage: 'macOS-10.13'
+      steps:
+      - script: pwd
+      - script: go get
+      - script: make test
+
+    - job: test_windows
+      pool:
+        vmImage: 'vs2017-win2016'
+      steps:
+      - script: pwd
+      - script: go get
+      - script: make test
+
+  - stage: release
+    jobs:
+    - job: release
+      steps:
+      - script: echo release the code!

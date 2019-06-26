@@ -6,6 +6,7 @@ import (
 	"github.com/99designs/keyring"
 	"github.com/joemiller/vault-token-helper/pkg/store"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TODO only run if pass binary is available
@@ -18,7 +19,7 @@ func TestPassStore(t *testing.T) {
 		AllowedBackends: []keyring.BackendType{keyring.PassBackend},
 	})
 	assert.Nil(t, err)
-	assert.NotNil(t, st)
+	require.NotNil(t, st) // stop the tests if the store is nil, else everything following will panic
 
 	// Store a token
 	token1 := store.Token{
