@@ -1,0 +1,10 @@
+language: go
+
+matrix:
+  include:
+    - os: linux
+    - os: osx
+      osx_image: xcode10.2
+    - os: windows
+
+script: make test
