@@ -32,7 +32,13 @@ stages:
       steps:
       - script: pwd
       - script: go get
-      - script: make test
+      - script: |
+          sudo apt-get -qy install pass
+          # create entropy so that the gpg --gen-key command in the test doesn't hang forever
+          dd if=/dev/zero of=/dev/null &
+          make test ; ec=$?
+          kill %1
+          exit $ec
 
     - job: test_macos
       pool:
