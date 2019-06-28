@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	app = "vault"
+	app = "vault-token-helper"
 
 	cfg     config // root_config.go
 	debug   bool
@@ -89,7 +89,7 @@ func initBackend() error {
 	var err error
 
 	storeCfg := keyring.Config{
-		ServiceName: app,
+		ServiceName: "vault",
 
 		// keychain (macos)
 		KeychainTrustApplication: true,

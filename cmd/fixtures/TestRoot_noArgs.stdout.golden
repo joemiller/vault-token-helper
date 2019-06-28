@@ -1,7 +1,7 @@
 Vault Token Helper
 
 Usage:
-  vault [command]
+  vault-token-helper [command]
 
 Available Commands:
   backends    List the available backends on the current platform
@@ -13,6 +13,6 @@ Available Commands:
 Flags:
       --config string   config file (default is $HOME/.vault-token-helper.yaml)
       --debug           enable additional logging
-  -h, --help            help for vault
+  -h, --help            help for vault-token-helper
 
-Use "vault [command] --help" for more information about a command.
+Use "vault-token-helper [command] --help" for more information about a command.
