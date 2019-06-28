@@ -8,7 +8,7 @@ stages:
 
   - stage: test
     jobs:
-    - job: test_linux
+    - job: linux
       pool:
         vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
       # XXX: hack to install sudo inside the docker container - https://github.com/Microsoft/azure-pipelines-agent/issues/2043
@@ -30,7 +30,7 @@ stages:
           CI: "true"
         displayName: make test
 
-    - job: test_macos
+    - job: macos
       pool:
         vmImage: 'macOS-10.13'
       steps:
@@ -44,7 +44,7 @@ stages:
           CI: "true"
         displayName: make test
 
-    - job: test_windows
+    - job: windows
       pool:
         vmImage: 'vs2017-win2016'
       steps:
