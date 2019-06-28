@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/99designs/keyring"
@@ -19,8 +20,12 @@ func setup(t *testing.T) (string, func(t *testing.T)) {
 	pwd, err := os.Getwd()
 	require.Nil(t, err)
 
-	// XXX: we place the tempdir under /tmp to avoid "gpg: can't connect to the agent: File name too long" - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
-	tmpdir, err := ioutil.TempDir("/tmp", "vault-token-helper-pass-test")
+	tmp := os.TempDir()
+	if runtime.GOOS == "darwin" {
+		// XXX: on macos we place the tempdir under /tmp to avoid "gpg: can't connect to the agent: File name too long" - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
+		tmp = "/tmp"
+	}
+	tmpdir, err := ioutil.TempDir(tmp, "vault-token-helper-pass-test")
 	require.Nil(t, err)
 
 	// Create a temporary GPG dir
@@ -32,11 +37,12 @@ func setup(t *testing.T) (string, func(t *testing.T)) {
 
 	// import and trust the test key
 	cmd := exec.Command("gpg", "--import", filepath.Join(pwd, "fixtures", "test-gpg.key"))
-	err = cmd.Run()
-	require.Nil(t, err)
+	out, err := cmd.CombinedOutput()
+	require.Nil(t, err, string(out))
+
 	cmd = exec.Command("gpg", "--import-ownertrust", filepath.Join(pwd, "fixtures", "test-ownertrust-gpg.txt"))
-	err = cmd.Run()
-	require.Nil(t, err)
+	out, err = cmd.CombinedOutput()
+	require.Nil(t, err, string(out))
 
 	// initialize a 'pass' directory under the tmpdir using the gpg key-id created in the prior step
 	passdir := filepath.Join(tmpdir, ".password-store")
