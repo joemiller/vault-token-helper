@@ -32,7 +32,7 @@ stages:
 
     - job: macos
       pool:
-        vmImage: 'macOS-10.13'
+        vmImage: 'macOS-10.14'
       steps:
       - script: go get
         displayName: Install go deps
@@ -46,7 +46,7 @@ stages:
 
     - job: windows
       pool:
-        vmImage: 'vs2019-win2019'
+        vmImage: 'windows-2019'
       steps:
       - script: go get
         displayName: Install go deps
