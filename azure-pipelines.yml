@@ -53,7 +53,7 @@ stages:
       - script: |
           choco install -y pass-winmenu
         displayName: Install package deps
-      - script: make test
+      - pwsh: make test
         env:
           CI: "true"
         displayName: make test
