@@ -20,11 +20,6 @@ resources:
     options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
 
 stages:
-  # - stage: build
-  #   jobs:
-  #   - job: build
-  #     steps:
-  #     - script: echo Building!
 
   - stage: test
     jobs:
@@ -46,6 +41,8 @@ stages:
           sudo apt-get -qy install pass
         displayName: Install package deps
       - script: make test
+        env:
+          CI: "true"
         displayName: make test
 
     - job: test_macos
@@ -58,6 +55,8 @@ stages:
           brew install pass
         displayName: Install package deps
       - script: make test
+        env:
+          CI: "true"
         displayName: make test
 
     - job: test_windows
@@ -67,10 +66,12 @@ stages:
       - script: go get
         displayName: Install go deps
       - script: make test
+        env:
+          CI: "true"
         displayName: make test
 
   - stage: release
     jobs:
     - job: release
       steps:
-      - script: echo release the code!
+      - script: echo TODO release the code!
