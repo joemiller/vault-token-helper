@@ -38,6 +38,8 @@ stages:
           /tmp/docker exec -t -u 0 ci-container \
           sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
         displayName: Set up sudo
+      - script: go get
+        displayName: Install go deps
       - script: |
           set -e
           sudo apt-get -qy update
@@ -50,19 +52,22 @@ stages:
       pool:
         vmImage: 'macOS-10.13'
       steps:
-      - script: pwd
       - script: go get
+        displayName: Install go deps
       - script: |
           brew install pass
-          make test
+        displayName: Install package deps
+      - script: make test
+        displayName: make test
 
     - job: test_windows
       pool:
         vmImage: 'vs2017-win2016'
       steps:
-      - script: pwd
       - script: go get
+        displayName: Install go deps
       - script: make test
+        displayName: make test
 
   - stage: release
     jobs:
