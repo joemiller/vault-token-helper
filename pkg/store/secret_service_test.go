@@ -3,6 +3,7 @@
 package store_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/99designs/keyring"
@@ -11,6 +12,12 @@ import (
 )
 
 func TestSecretServiceStore(t *testing.T) {
+	// TODO: get this working in CI. The current blocker is needing to have a dbus prompter service that
+	// can be driven automatically and headless.
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping testing in CI environment")
+	}
+
 	st, err := store.New(keyring.Config{
 		ServiceName:              "test",
 		KeychainTrustApplication: true,
