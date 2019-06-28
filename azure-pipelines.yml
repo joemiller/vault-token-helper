@@ -17,6 +17,7 @@ resources:
   containers:
   - container: linux
     image: golang:1.12
+    options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
 
 stages:
   # - stage: build
@@ -28,17 +29,22 @@ stages:
   - stage: test
     jobs:
     - job: test_linux
+      pool:
+        vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
+      # XXX: hack to install sudo inside the docker container - https://github.com/Microsoft/azure-pipelines-agent/issues/2043
       container: linux
       steps:
-      - script: pwd
-      - script: go get
       - script: |
+          /tmp/docker exec -t -u 0 ci-container \
+          sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
+        displayName: Set up sudo
+      - script: |
+          set -e
+          sudo apt-get -qy update
           sudo apt-get -qy install pass
-          # create entropy so that the gpg --gen-key command in the test doesn't hang forever
-          dd if=/dev/zero of=/dev/null &
-          make test ; ec=$?
-          kill %1
-          exit $ec
+        displayName: Install package deps
+      - script: make test
+        displayName: make test
 
     - job: test_macos
       pool:
@@ -46,7 +52,9 @@ stages:
       steps:
       - script: pwd
       - script: go get
-      - script: make test
+      - script: |
+          brew install pass
+          make test
 
     - job: test_windows
       pool:

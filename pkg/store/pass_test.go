@@ -1,7 +1,6 @@
 package store_test
 
 import (
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -16,23 +15,10 @@ import (
 
 // TODO only run if pass binary is available
 
-var gpgConf = `
-%echo Generating a default key
-Key-Type: default
-Subkey-Type: default
-Name-Real: test-key
-Name-Comment: testing
-Name-Email: test@vault-token-helper
-Expire-Date: 0
-%no-protection
-# %pubring test.pub
-# %secring test.sec
-# Do a commit here, so that we can later print "done" :-)
-%commit
-%echo done
-`
-
 func setup(t *testing.T) (string, func(t *testing.T)) {
+	pwd, err := os.Getwd()
+	require.Nil(t, err)
+
 	// XXX: we place the tempdir under /tmp to avoid "gpg: can't connect to the agent: File name too long" - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
 	tmpdir, err := ioutil.TempDir("/tmp", "vault-token-helper-pass-test")
 	require.Nil(t, err)
@@ -44,28 +30,18 @@ func setup(t *testing.T) (string, func(t *testing.T)) {
 	os.Unsetenv("GPG_AGENT_INFO")
 	os.Unsetenv("GPG_TTY")
 
-	// Create a GPG key for testing
-	//   eg: gpg --batch --quiet --gen-key --debug-quick-random < gpg-keygen.conf
-	//
-	cmd := exec.Command("gpg", "--batch", "--yes", "--quiet", "--gen-key", "--debug-quick-random")
-	stdin, err := cmd.StdinPipe()
-	cmd.Stderr = os.Stderr // useful for debugging errors with gpg
-	cmd.Stdout = os.Stdout
+	// import and trust the test key
+	cmd := exec.Command("gpg", "--import", filepath.Join(pwd, "fixtures", "test-gpg.key"))
+	err = cmd.Run()
 	require.Nil(t, err)
-
-	err = cmd.Start()
-	require.Nil(t, err)
-
-	io.WriteString(stdin, gpgConf)
-	stdin.Close()
-
-	err = cmd.Wait()
+	cmd = exec.Command("gpg", "--import-ownertrust", filepath.Join(pwd, "fixtures", "test-ownertrust-gpg.txt"))
+	err = cmd.Run()
 	require.Nil(t, err)
 
 	// initialize a 'pass' directory under the tmpdir using the gpg key-id created in the prior step
 	passdir := filepath.Join(tmpdir, ".password-store")
 	os.Setenv("PASSWORD_STORE_DIR", passdir)
-	cmd = exec.Command("pass", "init", "test@vault-token-helper")
+	cmd = exec.Command("pass", "init", "test@example.com")
 	err = cmd.Run()
 	require.Nil(t, err)
 
