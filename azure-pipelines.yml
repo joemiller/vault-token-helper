@@ -50,9 +50,6 @@ stages:
       steps:
       - script: go get
         displayName: Install go deps
-      - script: |
-          choco install -y pass-winmenu
-        displayName: Install package deps
       - pwsh: make test
         env:
           CI: "true"

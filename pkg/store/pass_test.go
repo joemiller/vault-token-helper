@@ -17,12 +17,17 @@ import (
 // TODO only run if pass binary is available
 
 func setup(t *testing.T) (string, func(t *testing.T)) {
+	if _, err := exec.LookPath("pass"); err != nil {
+		t.Skip("'pass' executable not found in $PATH, skipping")
+	}
+
 	pwd, err := os.Getwd()
 	require.Nil(t, err)
 
 	tmp := os.TempDir()
 	if runtime.GOOS == "darwin" {
-		// XXX: on macos we place the tempdir under /tmp to avoid "gpg: can't connect to the agent: File name too long" - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
+		// XXX: on macos we place the tempdir under /tmp to avoid "gpg: can't connect to the agent: File name too long"
+		//https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
 		tmp = "/tmp"
 	}
 	tmpdir, err := ioutil.TempDir(tmp, "vault-token-helper-pass-test")
