@@ -28,9 +28,8 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if token.Token != "" {
-			fmt.Fprint(os.Stdout, token.Token) // no trailing newline when outputting token for Vault
-		}
+
+		fmt.Fprint(os.Stdout, token.Token) // no trailing newline
 
 		return nil
 	},

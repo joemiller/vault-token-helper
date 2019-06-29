@@ -37,8 +37,7 @@ func Execute() {
 func init() {
 	// Send all usage and error messages to STDERR. Vault expects token helpers will only
 	// ever return tokens on STDOUT, all other informational messages must go through STDERR
-	//	RootCmd.SetOutput(os.Stderr)
-	RootCmd.SetOut(os.Stdout)
+	RootCmd.SetOut(os.Stderr)
 	RootCmd.SetErr(os.Stderr)
 
 	cobra.OnInitialize(initDefaultConfig)
