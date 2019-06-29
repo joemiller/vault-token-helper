@@ -18,6 +18,7 @@ SHELL
 
   config.vm.provision "shell", inline: "choco install -y git"
   config.vm.provision "shell", inline: "choco install -y golang"
+  config.vm.provision "shell", inline: "choco install -y vault"
 
   # mount the project into c:\src
   config.vm.synced_folder "../..", "/src"
