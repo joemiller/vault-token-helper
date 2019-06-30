@@ -19,6 +19,8 @@ stages:
           sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
         displayName: Set up sudo
       - script: go get
+        env:
+          GOPROXY: "https://proxy.golang.org"
         displayName: Install go deps
       - script: |
           set -e
@@ -34,11 +36,13 @@ stages:
       pool:
         vmImage: 'macOS-10.14'
       steps:
-      - script: go get
-        displayName: Install go deps
       - script: |
           brew install pass
         displayName: Install package deps
+      - script: go get
+        env:
+          GOPROXY: "https://proxy.golang.org"
+        displayName: Install go deps
       - script: make test
         env:
           CI: "true"
@@ -49,6 +53,8 @@ stages:
         vmImage: 'windows-2019'
       steps:
       - script: go get
+        env:
+          GOPROXY: "https://proxy.golang.org"
         displayName: Install go deps
       - pwsh: make test
         env:
