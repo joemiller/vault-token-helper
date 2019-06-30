@@ -75,6 +75,7 @@ stages:
         vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
       steps:
       - script: |
+          set -e
           curl -s https://api.github.com/repos/pantheon-systems/autotag/releases/latest | \
             grep browser_download | \
             grep -i linux | \
