@@ -1,5 +1,9 @@
-trigger: none # disable "CI builds"
-pr: # only enable builds for pushes on an open PR
+trigger: # run on all commits to master branch
+  branches:
+    include:
+    - master
+
+pr: # run pipeline on PRs
   branches:
     include:
     - '*'  # must quote since "*" is a YAML reserved character; we want a string
@@ -65,9 +69,20 @@ stages:
   - stage: release
     jobs:
     - job: release
+      # only generate releases on master branches.
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       pool:
         vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
       steps:
-      - script: make release
+      - script: |
+          curl -s https://api.github.com/repos/pantheon-systems/autotag/releases/latest | \
+            grep browser_download | \
+            grep -i linux | \
+            cut -d '"' -f 4 | \
+            xargs curl -o ~/autotag -L \
+            && chmod 755 ~/autotag
+          ~/autotag
+          git reset --hard
+
+          make release
         displayName: make release
