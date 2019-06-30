@@ -76,6 +76,12 @@ stages:
       steps:
       - script: |
           set -e
+          # XXX: not sure if this is the best approach here. Without this, autotag will fail
+          # with 'error getting head commit: object does not exist'. For now, since we only cut
+          # releases from master branch it should be ok.
+          git checkout master
+          git reset --hard $(Build.SourceVersion)
+
           curl -s https://api.github.com/repos/pantheon-systems/autotag/releases/latest | \
             grep browser_download | \
             grep -i linux | \
@@ -83,7 +89,6 @@ stages:
             xargs curl -o ~/autotag -L \
             && chmod 755 ~/autotag
           ~/autotag
-          git reset --hard
 
           make release
         displayName: make release
