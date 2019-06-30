@@ -78,21 +78,6 @@ builds:
     goarch:
       - amd64
 
-# brew:
-#   github:
-#     owner: joemiller
-#     name: homebrew-taps
-#   commit_author:
-#     name: joe miller
-#     email: goreleaser@joemiller.me
-#   folder: Formula
-#   homepage: "https://github.com/joemiller/vault-token-helper"
-#   description: "Cross-platform @hashicorp Vault token helper"
-#   caveats: |
-#     Run this to create the ~/.vault file. This will instruct vault to use the token helper:
-
-#         vault-token-helper enable
-
 archives:
   - id: vault-token-helper
     builds: ["linux", "macos", "windows"]
@@ -116,57 +101,6 @@ brews:
         vault-token-helper enable
     dependencies:
       - vault
-
-# release:
-#   draft: true
-
-# archives:
-#   -
-#     id: "hugo"
-#     builds: ['hugo']
-#     format: tar.gz
-#     format_overrides:
-#       - goos: windows
-#         format: zip
-#     name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
-#     replacements:
-#       amd64: 64bit
-#       386: 32bit
-#       arm: ARM
-#       arm64: ARM64
-#       darwin: macOS
-#       linux: Linux
-#       windows: Windows
-#       openbsd: OpenBSD
-#       netbsd: NetBSD
-#       freebsd: FreeBSD
-#       dragonfly: DragonFlyBSD
-#     files:
-#       - README.md
-#       - LICENSE
-#   -
-#     id: "hugo_extended"
-#     builds: ['hugo_extended_windows', 'hugo_extended_linux', 'hugo_extended_darwin']
-#     format: tar.gz
-#     format_overrides:
-#       - goos: windows
-#         format: zip
-#     name_template: "{{.ProjectName}}_extended_{{.Version}}_{{.Os}}-{{.Arch}}"
-#     replacements:
-#       amd64: 64bit
-#       386: 32bit
-#       arm: ARM
-#       arm64: ARM64
-#       darwin: macOS
-#       linux: Linux
-#       windows: Windows
-#       openbsd: OpenBSD
-#       netbsd: NetBSD
-#       freebsd: FreeBSD
-#       dragonfly: DragonFlyBSD
-#     files:
-#       - README.md
-#       - LICENSE
 
 # nfpms:
 #   -
