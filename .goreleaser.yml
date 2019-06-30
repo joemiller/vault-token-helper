@@ -1,52 +1,218 @@
+# builds:
+# -
+#   env:
+#     - CGO_ENABLED=1
+#   ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+#   goos:
+#     # - linux
+#     - darwin
+#     - windows
+#     # - freebsd
+#     # - openbsd
+#     # - dragonfly
+#     # - netbsd
+#   goarch:
+#     - 386
+#     - amd64
+#     # - arm
+#     # - arm64
+#   ignore:
+#     - goos: darwin
+#       goarch: 386
+# checksum:
+#   name_template: 'checksums.txt'
+# snapshot:
+#   name_template: "{{ .Tag }}-next"
+# changelog:
+#   sort: asc
+#   filters:
+#     exclude:
+#     - '^docs:'
+#     - '^test:'
+
+# archives:
+#   - id: vault-token-helper
+#     format: binary
+#     replacements:
+#       386: i386
+
+
+project_name: vault-token-helper
+env:
+  - GO111MODULE=on
+  # - GOPROXY=https://proxy.golang.org
 builds:
--
-  ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
-  goos:
-    - linux
-    - darwin
-    - windows
-    - freebsd
-    - openbsd
-    - dragonfly
-    - netbsd
-  goarch:
-    - 386
-    - amd64
-    - arm
-    - arm64
-  ignore:
-    - goos: darwin
-      goarch: 386
-checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^docs:'
-    - '^test:'
+  - binary: vault-token-helper
+    id: windows
+    ldflags:
+      - -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+      - "-extldflags '-static'"
+    env:
+      - CGO_ENABLED=1
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    goos:
+      - windows
+    goarch:
+      - amd64
+
+  - binary: vault-token-helper
+    id: macos
+    ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+    env:
+      - CGO_ENABLED=1
+      - CC=o64-clang
+      - CXX=o64-clang++
+    goos:
+      - darwin
+    goarch:
+      - amd64
+
+  - binary: vault-token-helper
+    id: linux
+    ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+# brew:
+#   github:
+#     owner: joemiller
+#     name: homebrew-taps
+#   commit_author:
+#     name: joe miller
+#     email: goreleaser@joemiller.me
+#   folder: Formula
+#   homepage: "https://github.com/joemiller/vault-token-helper"
+#   description: "Cross-platform @hashicorp Vault token helper"
+#   caveats: |
+#     Run this to create the ~/.vault file. This will instruct vault to use the token helper:
+
+#         vault-token-helper enable
 
 archives:
   - id: vault-token-helper
-    format: binary
-    replacements:
-      386: i386
+    builds: ["linux", "macos", "windows"]
 
-brew:
-  github:
-    owner: joemiller
-    name: homebrew-taps
-  commit_author:
-    name: goreleaser
-    email: goreleaser@joemiller.me
-  folder: Formula
-  homepage: "https://github.com/joemiller/vault-token-helper"
-  description: "Cross-platform @hashicorp Vault token helper with support for multiple storage backends"
-  caveats: |
-    You need to set a path to the token helper in your ~/.vault file.
-    Run the following to create the ~/.vault file:
+brews:
+  - ids:
+      # builds to use
+      - macos
+    github:
+      owner: joemiller
+      name: homebrew-taps
+    commit_author:
+      name: joe miller
+      email: goreleaser@joemiller.me
+    folder: Formula
+    homepage: "https://github.com/joemiller/vault-token-helper"
+    description: "Cross-platform @hashicorp Vault token helper"
+    caveats: |
+      Run this to create the ~/.vault file. This will instruct vault to use the token helper:
 
-    echo "token_helper = \\"$(brew --prefix joemiller/taps/vault-token-helper)/bin/vault-token-helper\\"" > ~/.vault
+        vault-token-helper enable
+    dependencies:
+      - vault
+
+# release:
+#   draft: true
+
+# archives:
+#   -
+#     id: "hugo"
+#     builds: ['hugo']
+#     format: tar.gz
+#     format_overrides:
+#       - goos: windows
+#         format: zip
+#     name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+#     replacements:
+#       amd64: 64bit
+#       386: 32bit
+#       arm: ARM
+#       arm64: ARM64
+#       darwin: macOS
+#       linux: Linux
+#       windows: Windows
+#       openbsd: OpenBSD
+#       netbsd: NetBSD
+#       freebsd: FreeBSD
+#       dragonfly: DragonFlyBSD
+#     files:
+#       - README.md
+#       - LICENSE
+#   -
+#     id: "hugo_extended"
+#     builds: ['hugo_extended_windows', 'hugo_extended_linux', 'hugo_extended_darwin']
+#     format: tar.gz
+#     format_overrides:
+#       - goos: windows
+#         format: zip
+#     name_template: "{{.ProjectName}}_extended_{{.Version}}_{{.Os}}-{{.Arch}}"
+#     replacements:
+#       amd64: 64bit
+#       386: 32bit
+#       arm: ARM
+#       arm64: ARM64
+#       darwin: macOS
+#       linux: Linux
+#       windows: Windows
+#       openbsd: OpenBSD
+#       netbsd: NetBSD
+#       freebsd: FreeBSD
+#       dragonfly: DragonFlyBSD
+#     files:
+#       - README.md
+#       - LICENSE
+
+# nfpms:
+#   -
+#     id: "hugo"
+#     builds: ['hugo']
+#     formats:
+#         - deb
+#     vendor: "gohugo.io"
+#     homepage: "https://gohugo.io/"
+#     maintainer: "Bjørn Erik Pedersen <bjorn.erik.pedersen@gmail.com>"
+#     description: "A Fast and Flexible Static Site Generator built with love in GoLang."
+#     license: "Apache 2.0"
+#     name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+#     replacements:
+#       amd64: 64bit
+#       386: 32bit
+#       arm: ARM
+#       arm64: ARM64
+#       darwin: macOS
+#       linux: Linux
+#       windows: Windows
+#       openbsd: OpenBSD
+#       netbsd: NetBSD
+#       freebsd: FreeBSD
+#       dragonfly: DragonFlyBSD
+#   -
+#     id: "hugo_extended"
+#     builds: ['hugo_extended_linux']
+#     formats:
+#         - deb
+#     vendor: "gohugo.io"
+#     homepage: "https://gohugo.io/"
+#     maintainer: "Bjørn Erik Pedersen <bjorn.erik.pedersen@gmail.com>"
+#     description: "A Fast and Flexible Static Site Generator built with love in GoLang."
+#     license: "Apache 2.0"
+#     name_template: "{{.ProjectName}}_extended_{{.Version}}_{{.Os}}-{{.Arch}}"
+#     replacements:
+#       amd64: 64bit
+#       386: 32bit
+#       arm: ARM
+#       arm64: ARM64
+#       darwin: macOS
+#       linux: Linux
+#       windows: Windows
+#       openbsd: OpenBSD
+#       netbsd: NetBSD
+#       freebsd: FreeBSD
+#       dragonfly: DragonFlyBSD
 

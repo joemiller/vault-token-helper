@@ -7,20 +7,23 @@ lint:
 test:
 	@go test -coverprofile=cover.out -v ./...
 
-test-update-golden-files:
-	@go test -v ./cmd/... -update
-
 cov:
 	@go tool cover -html=cover.out
 
 build:
 	@go build .
 
-build-linux:
-	@GOOS=linux go build .
+release:
+	@docker run \
+		--rm \
+		-e GITHUB_TOKEN=$$GITHUB_TOKEN \
+		-v `pwd`:/src \
+		-w /src \
+		dockercore/golang-cross \
+			sh -c 'curl -sL https://git.io/goreleaser | bash -s -- $(GORELEASER_ARGS)'
 
-snapshot:
-	@goreleaser --snapshot --rm-dist --debug
+snapshot: GORELEASER_ARGS= --rm-dist --snapshot
+snapshot: release
 
 build-dev-docker-image:
 	@docker build -t joemiller/vault-token-helper-dev -f ./dev/Dockerfile.dev ./dev
