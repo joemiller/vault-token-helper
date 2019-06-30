@@ -1,0 +1,92 @@
+---
+version: 2.1
+
+## -- executors
+executors:
+  linux:
+    docker:
+      - image: circleci/golang:1.12
+    environment:
+      GOPROXY: https://proxy.golang.org
+
+  macos:
+    macos:
+      xcode: "10.2.0"
+
+## -- re-usable commands
+commands:
+  save-go-mod-cache:
+    steps:
+      - save_cache:
+          key: v2-dependencies-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg/mod
+
+  restore-go-mod-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "go.sum" }}
+
+  save-workspace:
+    steps:
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./
+
+  restore-workspace:
+    steps:
+      - attach_workspace:
+          at: .
+
+## -- jobs
+jobs:
+  test-macos:
+    executor: macos
+    steps:
+      - checkout
+      - run: make test
+
+  test-linux:
+    executor: linux
+    steps:
+      - checkout
+      - restore-go-mod-cache
+      # run tasks
+      - run: sudo apt -qy install pass
+      - run: make test
+      # persist cache for future builds, save current directory to workspace for persisting to next job
+      - save-go-mod-cache
+      - save-workspace
+
+  release:
+    executor: linux
+    steps:
+      - restore-workspace
+      - restore-go-mod-cache
+      - run: |
+          curl -s https://api.github.com/repos/pantheon-systems/autotag/releases/latest | \
+            grep browser_download | \
+            grep -i linux | \
+            cut -d '"' -f 4 | \
+            xargs curl -o ~/autotag -L \
+          && chmod 755 ~/autotag
+      - run: ~/autotag
+      - run: curl -sL https://git.io/goreleaser | bash -s -- --parallelism=2
+
+## -- workflows
+workflows:
+  version: 2
+  main:
+    jobs:
+      - test-linux
+      - test-macos
+      - release:
+          requires:
+            - test-linux
+            - test-macos
+          filters:
+            branches:
+              only:
+                - master

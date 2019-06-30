@@ -1,0 +1,73 @@
+trigger: none # disable "CI builds"
+pr: # only enable builds for pushes on an open PR
+  branches:
+    include:
+    - '*'  # must quote since "*" is a YAML reserved character; we want a string
+
+resources:
+  containers:
+  - container: linux
+    image: golang:1.12
+    # XXX: hack to install sudo inside the docker container - https://github.com/Microsoft/azure-pipelines-agent/issues/2043
+    options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
+
+stages:
+
+  - stage: test
+    jobs:
+    - job: linux
+      pool:
+        vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
+      container: linux
+      steps:
+      - script: |
+          # XXX: hack to install sudo inside the docker container - https://github.com/Microsoft/azure-pipelines-agent/issues/2043
+          /tmp/docker exec -t -u 0 ci-container \
+          sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
+        displayName: Set up sudo
+      - script: go get
+        displayName: Install go deps
+      - script: |
+          set -e
+          sudo apt-get -qy update
+          sudo apt-get -qy install pass
+        displayName: Install package deps
+      - script: make test
+        env:
+          CI: "true"
+        displayName: make test
+
+    - job: macos
+      pool:
+        vmImage: 'macOS-10.14'
+      steps:
+      - script: |
+          brew install pass
+        displayName: Install package deps
+      - script: go get
+        displayName: Install go deps
+      - script: make test
+        env:
+          CI: "true"
+        displayName: make test
+
+    - job: windows
+      pool:
+        vmImage: 'windows-2019'
+      steps:
+      - script: go get
+        displayName: Install go deps
+      - pwsh: make test
+        env:
+          CI: "true"
+        displayName: make test
+
+  - stage: release
+    jobs:
+    - job: release
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      pool:
+        vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
+      steps:
+      - script: make release
+        displayName: make release
