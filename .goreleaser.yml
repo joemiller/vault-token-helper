@@ -49,15 +49,18 @@ changelog:
     - Merge branch
 
 archives:
+  # binary-only releasess - all platforms
   - id: binaries
     builds: ["linux", "macos", "windows"]
     format: binary
+  # archive releases containg: binary, readme, and license. tarballs (macos, linux), zip (windows)
   - id: archives
     builds: ["linux", "macos", "windows"]
     format_overrides:
       - goos: windows
         format: zip
 
+# homebrew (macos)
 brews:
   - ids:
       - archives
@@ -77,6 +80,7 @@ brews:
     dependencies:
       - vault
 
+# deb, rpm packages (linux)
 nfpms:
   - id: "vault-token-helper"
     builds: ["linux"]
