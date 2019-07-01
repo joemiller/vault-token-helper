@@ -91,4 +91,6 @@ stages:
           ~/autotag
 
           make release
+        env:
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
         displayName: make release
