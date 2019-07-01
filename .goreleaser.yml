@@ -83,10 +83,7 @@ archives:
     builds: ["linux", "macos", "windows"]
 
 brews:
-  - ids:
-      # builds to use
-      - macos
-    github:
+  - github:
       owner: joemiller
       name: homebrew-taps
     commit_author:
