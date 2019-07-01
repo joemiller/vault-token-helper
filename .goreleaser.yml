@@ -49,14 +49,19 @@ changelog:
     - Merge branch
 
 archives:
-  - id: vault-token-helper
+  - id: binaries
+    builds: ["linux", "macos", "windows"]
+    format: binary
+  - id: archives
     builds: ["linux", "macos", "windows"]
     format_overrides:
       - goos: windows
         format: zip
 
 brews:
-  - github:
+  - ids:
+      - archives
+    github:
       owner: joemiller
       name: homebrew-taps
     commit_author:
