@@ -20,7 +20,9 @@ release:
 		-v `pwd`:/src \
 		-w /src \
 		dockercore/golang-cross \
-			sh -c 'curl -sL https://git.io/goreleaser | bash -s -- $(GORELEASER_ARGS)'
+			sh -c 'apt-get -qy update && \
+				apt-get -qy install rpm && \
+				curl -sL https://git.io/goreleaser | bash -s -- $(GORELEASER_ARGS)'
 
 snapshot: GORELEASER_ARGS= --rm-dist --snapshot
 snapshot: release
