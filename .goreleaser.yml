@@ -51,7 +51,9 @@ changelog:
 archives:
   - id: vault-token-helper
     builds: ["linux", "macos", "windows"]
-    format: binary # no zip, no tarball, just push the binaries to github releases
+    format_overrides:
+      - goos: windows
+        format: zip
 
 brews:
   - github:
