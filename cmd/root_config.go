@@ -2,31 +2,9 @@ package cmd
 
 import "github.com/spf13/viper"
 
-// config file example, yaml:
-//
-//   # $HOME/.vault-token-helper.yaml
-//   ---
-//   backend: [automatic, (default)
-//             keychain,
-//             secret-service,
-//             pass,
-//             wincred]
-//
-//   keychain:
-//    keychain: (optional) name of macOS keychain to use. Default is the standard login keychain
-//    icloud: (optional) boolean. If true, the secret will be syncronizable to iCloud Keychain. Default: false
-//
-//   secret_service:
-//     collection: (optional) name of the collection to store tokens in (default: 'vault')
-//
-//   pass:
-//     dir: (optional) path to password-store directory
-//     command: (optional) path to the pass executable
-//     prefix: (optional) prefix to apply to stored tokens (default: 'vault')
-//
-//   wincred:
-//     prefix: (optional) prefix to apply to stored tokens (default: 'vault')
-//
+// When modifying this file be sure to update the "vault-token-helper.annotated.yaml"
+// at the root of the repo.
+
 type config struct {
 	BackendType   string                     `mapstructure:"backend"`
 	Keychain      keychainBackendConfig      `mapstructure:"keychain"`

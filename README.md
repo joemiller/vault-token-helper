@@ -1,140 +1,165 @@
-vault-gpg-token-helper
-======================
+vault-token-helper
+==================
 
-[![CircleCI](https://circleci.com/gh/joemiller/vault-gpg-token-helper.svg?style=svg)](https://circleci.com/gh/joemiller/vault-gpg-token-helper)
+A @hashicorp Vault [token helper](https://www.vaultproject.io/docs/commands/token-helper.html) with
+support for native secret storage systems on multiple platforms: macOS, Linux, Windows.
 
-A @hashicorp Vault [token helper](https://www.vaultproject.io/docs/commands/token-helper.html) for storing tokens in a GPG encrypted file.
+Features
+--------
 
-Features:
+Store and retriev tokens for multiple Vault (`$VAULT_ADDR`) instances, simplifying operators'
+workflows when working with multiple Vaults.
 
-* Supports storing multiple tokens based on the `$VAULT_ADDR` env var.
-* Supports GPG keys stored on YubiKey and other smartcards.
+Supported backends:
+
+* macOS Keychain
+* Linux (DBus Secret Service compatible backends, eg: Gnome Keyring)
+* Windows (WinCred)
+* [pass](https://www.passwordstore.org/)
 
 Install
 -------
 
-### Requirements
+### One-line install
 
-* `vault` cli (macOS: `brew install vault`)
-* `gpg` (Tested with 2.2.x, likely compatible with 1.x and 2.1, macOS: `brew install gnupg`)
+| OS    | Command                                          |
+| ----- | ------------------------------------------------ |
+| macOS | `brew install joemiller/taps/vault-token-helper` |
 
-A `gpg` binary should be in your `$PATH`. An explicit path can be set with the
-`VAULT_GPG_BIN` environment variable.
+### Linux package install
 
-This program uses the gpg binary instead of Go's opengpg library to make it possible
-to utilize GPG keys stored on a hardware device such as a YubiKey.
+| Format                                                                 | Architectures |
+| ---------------------------------------------------------------------- | ------------- |
+| [rpm](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
+| [deb](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
 
-1. Install binary:
+### Pre-built binaries
 
-  * Binary releases are [available](https://github.com/joemiller/vault-gpg-token-helper/releases) for many platforms.
-  * Homebrew (macOS): `brew install joemiller/taps/vault-gpg-token-helper`
+| OS      | Architectures | release                                                                               |
+| ------- | ------------- | ------------------------------------------------------------------------------------- |
+| macOS   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
+| Linux   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
+| Windows | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
 
-2. After installation:
+### From source
 
-  * Create a `~/.vault` file with contents:
+Clone this repo and compile for the current architecture:
 
-    ```toml
-    token_helper = "/path/to/vault-gpg-token-helper"
-    ```
-
-    > For homebrew installations you can create this file by running:
-    >
-    > ```console
-    > echo "token_helper = \"$(brew --prefix joemiller/taps/vault-gpg-token-helper)/bin/vault-gpg-token-helper\"" > ~/.vault
-    > ```
-
-3. Create config file `~/.vault-gpg-token-helper.toml`:
-
-The default config file is `~/.vault-gpg-token-helper.toml`. This can be changed with the
-`VAULT_GPG_CONFIG` environment variable.
-
-At minimum a `gpg_key_id` must be set in the config file. Alternatively it can be
-specified by the `VAULT_GPG_KEY_ID` environment variable.
-
-Example:
-
-```toml
-gpg_key_id = "first last (yubikey) <firstlast@dom.tld>"
+```sh
+make build
 ```
 
-> Run `gpg --list-keys` for a list of keys.
+Binaries for all supported platforms can also be built using the [dockercore/golang-cross](https://github.com/docker/golang-cross)
+image. This is the same image used by the docker cli project. The image supports building and linking
+to local system libraries such as the OSX SDK for macOS:
+
+```sh
+make snapshot
+```
 
 Usage
 -----
 
-The `VAULT_ADDR` environment variable must be set. The storer uses this variable
-as an index for storing and retrieving tokens. This allows for easy switching
-between multiple Vault targets.
+### Configure Vault
 
-Example, adding a token to the store:
+Install `vault-token-helper` then run:
 
-```console
-export VAULT_ADDR="https://vault-a:8200"
-vault login
+```sh
+vault-token-helper enable
 ```
 
-Listing contents of the token store can be done with `gpg`, assuming you are using
-the default storage path:
+This creates (overwrites) the `$HOME/.vault` config file with the following contents. The `vault` CLI uses
+this config file to find and execute the token helper.
 
-```console
-gpg -d ~/.vault_tokens.gpg
+```toml
+token_helper = "/install/path/to/vault-token-helper"
 ```
 
-> CAREFUL! Tokens will be printed in the clear to your console. In the future we may
-> implement a safer 'list' command.
+### Configure vault-token-helper
 
-Creating a GPG keypair
-----------------------
+For most installations the defaults should be sufficient. `vault-token-helper` will read an optional
+configuration located at `$HOME/.vault-token-helper.yaml`.
 
-If you don't have a GPG key yet you can create one with:
+A fully annotated example config file is available in [./vault-token-helper.annotated.yaml](./vault-token-helper.annotated.yaml)
 
-```console
-gpg --full-generate-key
+### Login to Vault
+
+Set `VAULT_ADDR` to the URL of your Vault instance and run `vault` commands like normal. For example,
+to login and store a token on a Vault instance with the Okta auth plugin enabled:
+
+
+```sh
+export VAULT_ADDR=https://vault:8200
+vault login -method=okta username=joe@dom.tld
 ```
 
-Or, if using hardware key like a YubiKey with the OpenPGP applet enabled:
+Upon successful authentication the Vault token will be stored securely in the current platform's
+secrets store.
 
-```console
-gpg --card-edit
+Support for storing tokens from multiple Vault instances is implemented. Set the `VAULT_ADDR`
+environment variable to switch between Vault instances.
 
-gpg/card> admin
-gpg/card> generate
-…
-```
+### Additional commands
 
-Token Storage
--------------
+The standard `store`, `get`, and `erase` commands are implemented according to the vault token
+helper [spec](https://www.vaultproject.io/docs/commands/token-helper.html).
 
-Tokens are stored encrypted in `~/.vault_tokens.gpg` by default. This can be
-changed by:
+There are a few additional commands:
 
-* Setting the `token_db_file` configuration file option
-* Setting the `VAULT_GPG_TOKEN_STORE` environment variable
-
-Environment variables take precedence over configuration file settings.
-
-> Vault 0.10.2+ supports a `-no-print` flag to store the token without printing to stdout
+* `enable`: Enable the vault-token-helper by (over)writing the ~/.vault config file.
+* `backends`: List the available backends on the current platform
+* `list`: List tokens
 
 Support
 -------
 
-Please open a GitHub issue.
+Please open a GitHub [issue](https://github.com/joemiller/vault-token-helper/issues).
 
-Release Management
-------------------
+Development
+-----------
 
-Releases are cut automatically on a successful master branch build. This project uses
-[autotag](https://github.com/pantheon-systems/autotag) and [goreleaser](https://goreleaser.com/) to automate this process.
+### Tests
 
-Semver (vMajor.Minor.Patch) is used for versioning and releases. By default, autotag will bump the patch version
-on a successful master build, eg: `v1.0.0` -> `v1.0.1`.
+Run tests: `make test`.
 
-To bump the major or minor release instead, include the text `[major]` or `[minor]` in the commit message.
-See the autotag [docs](https://github.com/pantheon-systems/autotag#incrementing-major-and-minor-versions) for more details.
+Some tests are platform specific and difficult to test outside of a full desktop environment.
+Two aid in development there are Vagrant VMs with GUIs enabled in the `./vagrant/` directory.
+See the [./vagrant/README.md](./vagrant/README.md) for further details.
 
-To prevent a new release being built, include `[ci skip]` in the commit message. Only use this for things like documentation updtes.
+The most complete way to run all tests would be to run `make test` running under each platform.
+
+There is test coverage in `pkg/store` covering all of the supported backends. Additionally, there
+is an integration test in the `cmd` package.
+
+### CI/CD
+
+Azure DevOps Pipelines is used for CI and CD because it provides support for macos, windows, and linux.
+Tests are run on pull requests and releases are generated on successful master branch builds.
+
+### Release Management
+
+Releases are cut automatically on all successful master branch builds. This project uses
+[autotag](https://github.com/pantheon-systems/autotag) and [goreleaser](https://goreleaser.com/) to
+automate this process.
+
+Semver (vMajor.Minor.Patch) is used for versioning and releases. By default, autotag will bump the
+patch version on a successful master build, eg: `v1.0.0` -> `v1.0.1`.
+
+To bump the major or minor release instead, include `[major]` or `[minor]` in the commit message.
+Refer to the autotag [docs](https://github.com/pantheon-systems/autotag#incrementing-major-and-minor-versions)
+for more details.
+
+Include `[skip ci]` in the commit message to prevent a new version from being released. Only use this
+for things like documentation updates.
 
 TODO
 ----
 
-TODOs have moved to github [issues](https://github.com/joemiller/vault-gpg-token-helper/issues)
+*after v0.1.0:*
+- [ ] The wincred lib used by 99designs/keyring has more configuration options available. Make these available in 99designs/keyring and vault-token-helper.
+- [ ] add a flag like `--lookup` to `list` that will query vault for additional token info, eg: valid/invalid, ttl, policies
+- ci/cd:
+  - [ ] `sign` checksum.txt and assets in goreleaser.yaml GPG key
+  - [ ] apple `codesign` the macos binaries
+  - [ ] figure out how to cache go modules in azure pipelines, using this task maybe - https://github.com/microsoft/azure-pipelines-artifact-caching-tasks
+  - [ ] linux tests, figure out how to test dbus secret-service in headless CI. probably need a stub to connect to Dbus and provide the 'prompt' service
