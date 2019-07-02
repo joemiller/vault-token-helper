@@ -6,7 +6,7 @@ trigger: # run on all commits to master branch
 pr: # run pipeline on PRs
   branches:
     include:
-    - '*'  # must quote since "*" is a YAML reserved character; we want a string
+    - '*'
 
 resources:
   containers:
