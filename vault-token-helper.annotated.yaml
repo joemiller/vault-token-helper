@@ -1,0 +1,33 @@
+
+---
+## Specify the secret storage backend to use.
+##    Valid values:
+##     - automatic (default)
+##     - keychain
+##     - secret-service
+##     - wincred
+##     - pass
+# backend: automatic
+
+## macos Keychain config:
+#
+# keychain:
+#  keychain: (optional) name of macOS keychain to use. Default is the "login" keychain
+#  icloud: (optional) boolean. If true, the secret will be syncronizable to iCloud Keychain. Default: false
+
+## secret-service (linux, dbus secret service, gnome keyring, etc)
+#
+# secret_service:
+#   collection: (optional) name of the collection to store tokens in (default: 'vault')
+
+## Windows Credential Manager config options:
+#
+# wincred:
+#   prefix: (optional) prefix to apply to stored tokens (default: 'vault')
+
+## pass (passwordstore.org) config options:
+#
+# pass:
+#   dir: (optional) path to password-store directory
+#   command: (optional) path to the pass executable
+#   prefix: (optional) prefix to apply to stored tokens (default: 'vault')
