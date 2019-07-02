@@ -2,12 +2,12 @@ vault-token-helper
 ==================
 
 A @hashicorp Vault [token helper](https://www.vaultproject.io/docs/commands/token-helper.html) with
-support for native secret storage systems on multiple platforms: macOS, Linux, Windows.
+support of native secret storage backends on macOS, Linux, and Windows.
 
 Features
 --------
 
-Store and retriev tokens for multiple Vault (`$VAULT_ADDR`) instances, simplifying operators'
+Store and retrieve tokens for multiple Vault (`$VAULT_ADDR`) instances, simplifying operators'
 workflows when working with multiple Vaults.
 
 Supported backends:
@@ -49,9 +49,9 @@ Clone this repo and compile for the current architecture:
 make build
 ```
 
-Binaries for all supported platforms can also be built using the [dockercore/golang-cross](https://github.com/docker/golang-cross)
-image. This is the same image used by the docker cli project. The image supports building and linking
-to local system libraries such as the OSX SDK for macOS:
+Binaries for all supported platforms are built using the [dockercore/golang-cross](https://github.com/docker/golang-cross)
+image. This is the same image used by the docker cli project. The image makes it possible to
+cross-compile and link to platform-specific libraries such as the OSX SDK on macOS:
 
 ```sh
 make snapshot
@@ -68,8 +68,8 @@ Install `vault-token-helper` then run:
 vault-token-helper enable
 ```
 
-This creates (overwrites) the `$HOME/.vault` config file with the following contents. The `vault` CLI uses
-this config file to find and execute the token helper.
+This creates (overwrites) the `$HOME/.vault` config file with the following contents. The
+`vault` CLI uses this config file to find and execute the token helper.
 
 ```toml
 token_helper = "/install/path/to/vault-token-helper"
@@ -77,8 +77,8 @@ token_helper = "/install/path/to/vault-token-helper"
 
 ### Configure vault-token-helper
 
-For most installations the defaults should be sufficient. `vault-token-helper` will read an optional
-configuration located at `$HOME/.vault-token-helper.yaml`.
+For most installations the defaults should be sufficient. An optional configuration file
+located at `$HOME/.vault-token-helper.yaml` can be used to override the defaults.
 
 A fully annotated example config file is available in [./vault-token-helper.annotated.yaml](./vault-token-helper.annotated.yaml)
 
@@ -87,16 +87,15 @@ A fully annotated example config file is available in [./vault-token-helper.anno
 Set `VAULT_ADDR` to the URL of your Vault instance and run `vault` commands like normal. For example,
 to login and store a token on a Vault instance with the Okta auth plugin enabled:
 
-
 ```sh
 export VAULT_ADDR=https://vault:8200
 vault login -method=okta username=joe@dom.tld
 ```
 
-Upon successful authentication the Vault token will be stored securely in the current platform's
+Upon successful authentication the Vault token will be stored securely in the platform's
 secrets store.
 
-Support for storing tokens from multiple Vault instances is implemented. Set the `VAULT_ADDR`
+Support for storing tokens from multiple Vault instances is implemented. Change the `VAULT_ADDR`
 environment variable to switch between Vault instances.
 
 ### Additional commands
@@ -122,9 +121,10 @@ Development
 
 Run tests: `make test`.
 
-Some tests are platform specific and difficult to test outside of a full desktop environment.
-Two aid in development there are Vagrant VMs with GUIs enabled in the `./vagrant/` directory.
-See the [./vagrant/README.md](./vagrant/README.md) for further details.
+Some tests are platform specific and difficult to test outside of a full desktop environment
+due to interactive elements such as password prompts. To aid in development there are Vagrant
+VMs with GUIs enabled in the `./vagrant/` directory. See the
+[./vagrant/README.md](./vagrant/README.md) for further details.
 
 The most complete way to run all tests would be to run `make test` running under each platform.
 
@@ -156,10 +156,11 @@ TODO
 ----
 
 *after v0.1.0:*
-- [ ] The wincred lib used by 99designs/keyring has more configuration options available. Make these available in 99designs/keyring and vault-token-helper.
-- [ ] add a flag like `--lookup` to `list` that will query vault for additional token info, eg: valid/invalid, ttl, policies
-- ci/cd:
-  - [ ] `sign` checksum.txt and assets in goreleaser.yaml GPG key
-  - [ ] apple `codesign` the macos binaries
-  - [ ] figure out how to cache go modules in azure pipelines, using this task maybe - https://github.com/microsoft/azure-pipelines-artifact-caching-tasks
-  - [ ] linux tests, figure out how to test dbus secret-service in headless CI. probably need a stub to connect to Dbus and provide the 'prompt' service
+
+* [ ] The wincred lib used by 99designs/keyring has more configuration options available. Make these available in 99designs/keyring and vault-token-helper.
+* [ ] add a flag like `--lookup` to `list` that will query vault for additional token info, eg: valid/invalid, ttl, policies
+* ci/cd:
+  * [ ] `sign` checksum.txt and assets in goreleaser.yaml GPG key
+  * [ ] apple `codesign` the macos binaries
+  * [ ] figure out how to cache go modules in azure pipelines, using this task maybe - https://github.com/microsoft/azure-pipelines-artifact-caching-tasks
+  * [ ] linux tests, figure out how to test dbus secret-service in headless CI. probably need a stub to connect to Dbus and provide the 'prompt' service
