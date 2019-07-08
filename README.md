@@ -107,7 +107,8 @@ There are a few additional commands:
 
 * `enable`: Enable the vault-token-helper by (over)writing the ~/.vault config file.
 * `backends`: List the available backends on the current platform
-* `list`: List tokens
+* `list`: List tokens. Add `--extended` flag to lookup additional details about the stored
+    token by quering the Vault instance's token lookup API.
 
 Support
 -------
