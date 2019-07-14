@@ -48,6 +48,10 @@ changelog:
     - Merge pull request
     - Merge branch
 
+# GPG signing
+sign:
+  artifacts: checksum
+
 archives:
   # binary-only releasess - all platforms
   - id: binaries

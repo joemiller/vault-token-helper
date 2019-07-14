@@ -16,13 +16,12 @@ build:
 release:
 	@docker run \
 		--rm \
-		-e GITHUB_TOKEN=$$GITHUB_TOKEN \
+		-e "GITHUB_TOKEN=$$GITHUB_TOKEN" \
+		-e "GPG_KEY=$$GPG_KEY" \
 		-v `pwd`:/src \
 		-w /src \
 		dockercore/golang-cross \
-			sh -c 'apt-get -qy update && \
-				apt-get -qy install rpm && \
-				curl -sL https://git.io/goreleaser | bash -s -- $(GORELEASER_ARGS)'
+			/src/release.sh $(GORELEASER_ARGS)
 
 snapshot: GORELEASER_ARGS= --rm-dist --snapshot
 snapshot: release
