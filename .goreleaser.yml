@@ -50,7 +50,10 @@ changelog:
 
 # GPG signing
 sign:
-  artifacts: checksum
+  cmd: codesign
+  args: ['-s', 'Developer ID Application: JOSEPH MILLER (P3MF48HUD7)', '${artifact}']
+#  artifacts: checksum
+
 
 archives:
   # binary-only releasess - all platforms
