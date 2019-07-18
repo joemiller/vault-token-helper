@@ -74,11 +74,15 @@ stages:
       pool:
         vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
       steps:
+      - task: DownloadSecureFile@1
+        name: gpg_signing_key
+        inputs:
+          secureFile: 'vault-token-helper.signing-key.gpg'
       - script: |
           set -e
           # XXX: not sure if this is the best approach here. Without this, autotag will fail
-          # with 'error getting head commit: object does not exist'. For now, since we only cut
-          # releases from master branch it should be ok.
+          # with 'error getting head commit: object does not exist'. It should be ok for now,
+          # since we only cut releases from master.
           git checkout master
           git reset --hard $(Build.SourceVersion)
 
@@ -90,6 +94,7 @@ stages:
             && chmod 755 ~/autotag
           ~/autotag
 
+          export GPG_KEY=`cat $(gpg_signing_key.secureFilePath) | base64`
           make release
         env:
           GITHUB_TOKEN: $(GITHUB_TOKEN)
