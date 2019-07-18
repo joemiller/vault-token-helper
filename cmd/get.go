@@ -11,8 +11,7 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:          "get",
-	Short:        "Get the stored token for $VAULT_ADDR",
-	Hidden:       true, // don't show in help output. This command is intended for Vault to invoke
+	Short:        "(For use by vault) Print the stored token for the current $VAULT_ADDR",
 	SilenceUsage: true, // Don't show help on error, just print the error
 
 	RunE: func(cmd *cobra.Command, args []string) error {

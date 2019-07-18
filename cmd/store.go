@@ -13,8 +13,7 @@ import (
 // storeCmd represents the store command
 var storeCmd = &cobra.Command{
 	Use:          "store",
-	Short:        "Store a token for $VAULT_ADDR",
-	Hidden:       true, // don't show in help output. This command is intended for Vault to invoke
+	Short:        "(For use by vault) Store a token (from stdin) for the current $VAULT_ADDR",
 	SilenceUsage: true, // Don't show help on error, just print the error
 
 	RunE: func(cmd *cobra.Command, args []string) error {

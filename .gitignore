@@ -6,3 +6,4 @@ Attic/
 cover.out
 .vagrant
 vault-token-helper.exe
+.DS_Store

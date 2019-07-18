@@ -10,8 +10,7 @@ import (
 // eraseCmd represents the erase command
 var eraseCmd = &cobra.Command{
 	Use:          "erase",
-	Short:        "Erase the stored token for $VAULT_ADDR",
-	Hidden:       true, // don't show in help output. This command is intended for Vault to invoke
+	Short:        "(For use by vault) Erase the stored token for the current $VAULT_ADDR",
 	SilenceUsage: true, // Don't show help on error, just print the error
 
 	RunE: func(cmd *cobra.Command, args []string) error {
