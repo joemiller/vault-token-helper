@@ -28,8 +28,6 @@ var enableCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Unable to determine path to the vault-token-helper binary: %s", err)
 		}
-		fmt.Printf("bin: %s\n", bin)
-		fmt.Printf("os.args0: %s", os.Args[0])
 
 		// backup ~/.vault to ~/.vault.bak if it exists
 		_, err = os.Stat(path)
