@@ -51,10 +51,6 @@ changelog:
     - Merge pull request
     - Merge branch
 
-# TODO: publish full releases from ci when we can perform apple codesign in azure ci/cd
-release:
-  draft: true
-
 # GPG signing
 sign:
   artifacts: checksum
