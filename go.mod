@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/vault/api v1.0.2
+	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.8.0
 	github.com/spf13/cobra v0.0.5
