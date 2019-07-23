@@ -26,6 +26,9 @@ release:
 snapshot: GORELEASER_ARGS= --rm-dist --snapshot
 snapshot: release
 
+sign-and-promote-release:
+	bash ./scripts/sign-and-promote-release.sh
+
 build-dev-docker-image:
 	@docker build -t joemiller/vault-token-helper-dev -f ./dev/Dockerfile.dev ./dev
 

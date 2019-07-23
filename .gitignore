@@ -7,3 +7,5 @@ cover.out
 .vagrant
 vault-token-helper.exe
 .DS_Store
+.envrc
+vault-token-helper.signing-key.gpg
