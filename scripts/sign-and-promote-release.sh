@@ -1,8 +1,4 @@
 #!/bin/bash
-
-set -eou pipefail
-shopt -s nullglob
-
 # inputs:
 # - tag, eg: v0.1.1
 #
@@ -15,6 +11,11 @@ shopt -s nullglob
 # - upload the shasum file
 # - upload the shasum signature file
 # - promote release from draft to published
+#
+# requires: gothub - https://github.com/itchio/gothub
+
+set -eou pipefail
+shopt -s nullglob
 
 TAG="${TAG:-}"
 ORG="joemiller"
@@ -22,8 +23,6 @@ REPO="vault-token-helper"
 BINARY="vault-token-helper"
 CODESIGN_CERT="Developer ID Application: JOSEPH MILLER (P3MF48HUD7)"
 GPG_KEY="6720A9FD78AC13F5"
-
-export PATH="$HOME/bin:$PATH" # TODO
 
 if [[ -z "$TAG" ]]; then
   echo "Missing env var 'TAG'"
@@ -39,7 +38,7 @@ description=''
 tempdir="$(mktemp -d)"
 
 echo "==> Created tempdir: $tempdir"
-trap 'rm -rf -- "$tempdir"' EXIT
+trap 'echo "Cleaning up."; rm -rf -- "$tempdir"' EXIT
 
 echo
 echo "==> Fetching existing release info for $TAG"
@@ -64,17 +63,28 @@ ls -l "$tempdir"
 
 echo
 echo "==> Apple codesigning the macOS binaries"
-for i in ./*_darwin_amd64; do
-  echo "==> codesigning $i"
-  codesign -s "$CODESIGN_CERT" -i "$BINARY" "$i"
+for i in ./*_darwin_amd64*; do
   modified_assets+=("$i")
+
+  if [[ "$i" =~ (.tar|.zip) ]]; then
+    echo "==> untarring and codesigning archived macOS binary: $i"
+    tartmp="./tar-tmp"
+    mkdir "$tartmp"
+    tar -xzf "$i" -C "$tartmp"
+    codesign -s "$CODESIGN_CERT" -i "$BINARY" "$tartmp/$BINARY"
+    tar -cvzf "$i" -C "$tartmp" $(ls "$tartmp")
+    rm -rf -- "$tartmp"
+  else
+    echo "==> codesigning binary: $i"
+    codesign -s "$CODESIGN_CERT" -i "$BINARY" "$i"
+  fi
 done
 
 echo
 echo "==> Generating new checksum file"
 # delete existing checksum file before gathering new checksums
-rm -f -- "*.checksums.txt"
 checksum_file="${BINARY}_$(sed -e 's/^v//' <<<"$TAG")_checksums.txt"
+rm -f -- "$checksum_file"
 shasum -a 256 -- * >"$checksum_file"
 cat "$checksum_file"
 modified_assets+=("$checksum_file")
@@ -82,7 +92,8 @@ modified_assets+=("$checksum_file")
 echo
 echo "==> GPG-singing checksum file"
 sig_file="${checksum_file}.sig"
-gpg -u "$GPG_KEY" --output "$sig_file" --detach-sign "$checksum_file"
+rm -f -- "$sig_file"
+gpg --batch -u "$GPG_KEY" --output "$sig_file" --detach-sign "$checksum_file"
 modified_assets+=("$sig_file")
 
 echo
