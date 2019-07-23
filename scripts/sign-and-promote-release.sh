@@ -72,7 +72,7 @@ for i in ./*_darwin_amd64*; do
     mkdir "$tartmp"
     tar -xzf "$i" -C "$tartmp"
     codesign -s "$CODESIGN_CERT" -i "$BINARY" "$tartmp/$BINARY"
-    tar -cvzf "$i" -C "$tartmp" $(ls "$tartmp")
+    tar -czf "$i" -C "$tartmp" $(ls "$tartmp")
     rm -rf -- "$tartmp"
   else
     echo "==> codesigning binary: $i"
@@ -112,3 +112,6 @@ gothub edit -t "$TAG" -u "$ORG" -r "$REPO" -d "$description"
 
 echo
 echo "DONE!"
+echo "Next steps:"
+echo "- Download the macos tarball from: https://github.com/joemiller/vault-token-helper/releases/latest"
+echo "- update sha256 sum in the homebrew formula: https://github.com/joemiller/homebrew-taps/blob/master/Formula/vault-token-helper.rb"

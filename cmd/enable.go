@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/kardianos/osext"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
@@ -23,10 +24,12 @@ var enableCmd = &cobra.Command{
 		}
 		path := filepath.Join(home, ".vault") // ~/.vault
 
-		bin, err := filepath.Abs(os.Args[0])
+		bin, err := osext.Executable()
 		if err != nil {
 			return fmt.Errorf("Unable to determine path to the vault-token-helper binary: %s", err)
 		}
+		fmt.Printf("bin: %s\n", bin)
+		fmt.Printf("os.args0: %s", os.Args[0])
 
 		// backup ~/.vault to ~/.vault.bak if it exists
 		_, err = os.Stat(path)
