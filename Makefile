@@ -21,7 +21,7 @@ release:
 		-v `pwd`:/src \
 		-w /src \
 		dockercore/golang-cross \
-			/src/release.sh $(GORELEASER_ARGS)
+			/src/scripts/release.sh $(GORELEASER_ARGS)
 
 snapshot: GORELEASER_ARGS= --rm-dist --snapshot
 snapshot: release
