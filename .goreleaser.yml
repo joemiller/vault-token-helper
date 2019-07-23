@@ -66,8 +66,7 @@ archives:
     format: binary
   # archive releases containg: binary, readme, and license. tarballs (macos, linux), zip (windows)
   - id: archives
-    # TODO: add macos tar back when we can do codesign'ing during the goreleaser run
-    builds: ["linux", "windows"]
+    builds: ["linux", "macos", "windows"]
     format_overrides:
       - goos: windows
         format: zip
