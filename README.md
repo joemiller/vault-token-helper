@@ -24,31 +24,25 @@ Install
 
 ### One-line install
 
-| OS    | Command                                          |
-| ----- | ------------------------------------------------ |
-| macOS | `brew install joemiller/taps/vault-token-helper` |
+| OS                                 | Command                                          |
+| ---------------------------------- | ------------------------------------------------ |
+| macOS                              | `brew install joemiller/taps/vault-token-helper` |
+| Linux<br>(LinuxBrew)<br>*untested* | `brew install joemiller/taps/vault-token-helper` |
 
-### Linux package install
+### Linux packages
 
-| Format                                                                 | Architectures |
-| ---------------------------------------------------------------------- | ------------- |
-| [rpm](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
-| [deb](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
+| Format | Arch  |
+| ------ | ----- |
+| [rpm]  | amd64 |
+| [deb]  | amd64 |
 
 ### Pre-built binaries
 
-| OS      | Architectures | release                                                                               |
-| ------- | ------------- | ------------------------------------------------------------------------------------- |
-| macOS   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-| Linux   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-| Windows | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-
-
-| OS      | Architectures | binaries                              | packages    | one-line install                                 |
-| ------- | ------------- | ------------------------------------- | ----------- | ------------------------------------------------ |
-| macos   | amd64         | [vault-token-helper][latest-binaries] |             | `brew install joemiller/taps/vault-token-helper` |
-| Linux   | amd64         |                                       | [rpm] [deb] | [vault-token-helper][latest-binaries]            |
-| Windows | amd64         |                                       |             | [vault-token-helper][latest-binaries]            |
+| OS      | Arch  | binary                                |
+| ------- | ----- | ------------------------------------- |
+| macOS   | amd64 | [vault-token-helper][latest-binaries] |
+| Linux   | amd64 | [vault-token-helper][latest-binaries] |
+| Windows | amd64 | [vault-token-helper][latest-binaries] |
 
 [latest-binaries]: https://github.com/joemiller/vault-token-helper/releases/latest
 [rpm]: https://github.com/joemiller/vault-token-helper/releases/latest
