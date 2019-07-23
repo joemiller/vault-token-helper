@@ -1,7 +1,7 @@
 project_name: vault-token-helper
 env:
   - GO111MODULE=on
-  # - GOPROXY=https://proxy.golang.org
+  - GOPROXY=https://proxy.golang.org
 builds:
   - binary: vault-token-helper
     id: windows
@@ -28,6 +28,9 @@ builds:
       - darwin
     goarch:
       - amd64
+    # TODO: find a way to codesign from linux and integrate into azure pipelines ci/cd
+    # hooks:
+    #   post: ./macos-codesign.sh
 
   - binary: vault-token-helper
     id: linux
@@ -59,7 +62,8 @@ archives:
     format: binary
   # archive releases containg: binary, readme, and license. tarballs (macos, linux), zip (windows)
   - id: archives
-    builds: ["linux", "macos", "windows"]
+    # TODO: add macos tar back when we can do codesign'ing during the goreleaser run
+    builds: ["linux", "windows"]
     format_overrides:
       - goos: windows
         format: zip

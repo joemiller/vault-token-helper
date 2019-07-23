@@ -24,31 +24,25 @@ Install
 
 ### One-line install
 
-| OS    | Command                                          |
-| ----- | ------------------------------------------------ |
-| macOS | `brew install joemiller/taps/vault-token-helper` |
+| OS                                 | Command                                          |
+| ---------------------------------- | ------------------------------------------------ |
+| macOS                              | `brew install joemiller/taps/vault-token-helper` |
+| Linux<br>(LinuxBrew)<br>*untested* | `brew install joemiller/taps/vault-token-helper` |
 
-### Linux package install
+### Linux packages
 
-| Format                                                                 | Architectures |
-| ---------------------------------------------------------------------- | ------------- |
-| [rpm](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
-| [deb](https://github.com/joemiller/vault-token-helper/releases/latest) | amd64         |
+| Format | Arch  |
+| ------ | ----- |
+| [rpm]  | amd64 |
+| [deb]  | amd64 |
 
 ### Pre-built binaries
 
-| OS      | Architectures | release                                                                               |
-| ------- | ------------- | ------------------------------------------------------------------------------------- |
-| macOS   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-| Linux   | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-| Windows | amd64         | [vault-token-helper](https://github.com/joemiller/vault-token-helper/releases/latest) |
-
-
-| OS      | Architectures | binaries                              | packages    | one-line install                                 |
-| ------- | ------------- | ------------------------------------- | ----------- | ------------------------------------------------ |
-| macos   | amd64         | [vault-token-helper][latest-binaries] |             | `brew install joemiller/taps/vault-token-helper` |
-| Linux   | amd64         |                                       | [rpm] [deb] | [vault-token-helper][latest-binaries]            |
-| Windows | amd64         |                                       |             | [vault-token-helper][latest-binaries]            |
+| OS      | Arch  | binary                                |
+| ------- | ----- | ------------------------------------- |
+| macOS   | amd64 | [vault-token-helper][latest-binaries] |
+| Linux   | amd64 | [vault-token-helper][latest-binaries] |
+| Windows | amd64 | [vault-token-helper][latest-binaries] |
 
 [latest-binaries]: https://github.com/joemiller/vault-token-helper/releases/latest
 [rpm]: https://github.com/joemiller/vault-token-helper/releases/latest
@@ -209,6 +203,18 @@ $ GPG_KEY="$(cat vault-token-helper.signing-key.gpg | base64)" make release
 
 $ GPG_KEY="$(cat vault-token-helper.signing-key.gpg | base64)" make snapshot
 ```
+
+#### Apple codesign
+
+In order to avoid macOS keychain from always prompting for passwords the macOS binaries
+are codesigned with a cert issued by Apple. Unfortunately this can't be done easily in CI
+while still being able to leverage all the advantages of [goreleaser](https://goreleaser.com/).
+This will hopefully change one day when there is a `codesign` compatible binary available
+for Linux.
+
+In the meantime, all releases pushed by CI are created as draft releases. In order to promote
+a release, run `make sign-and-promote-release TAG=vX.Y.Z` from a macOS system with both the
+project GPG key and an apple code signing cert available.
 
 TODO
 ----
