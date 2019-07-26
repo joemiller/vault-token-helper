@@ -72,7 +72,7 @@ func extendedList() error {
 	fmt.Fprintln(w, "----------\t------------\t---\t---------\t--------\t")
 
 	outCh := make(chan string, len(addrs))
-	errCh := make(chan error, 1)
+	errCh := make(chan error, len(addrs))
 
 	for _, addr := range addrs {
 		wg.Add(1)
