@@ -24,22 +24,22 @@ Install
 
 ### One-line install
 
-| OS                                 | Command                                          |
-| ---------------------------------- | ------------------------------------------------ |
-| macOS                              | `brew install joemiller/taps/vault-token-helper` |
-| Linux<br>(LinuxBrew)<br>*untested* | `brew install joemiller/taps/vault-token-helper` |
+| OS                              | Command                                          |
+|---------------------------------|--------------------------------------------------|
+| macOS                           | `brew install joemiller/taps/vault-token-helper` |
+| Linux<br>(LinuxBrew) *untested* | `brew install joemiller/taps/vault-token-helper` |
 
 ### Linux packages
 
 | Format | Arch  |
-| ------ | ----- |
+|--------|-------|
 | [rpm]  | amd64 |
 | [deb]  | amd64 |
 
 ### Pre-built binaries
 
 | OS      | Arch  | binary                                |
-| ------- | ----- | ------------------------------------- |
+|---------|-------|---------------------------------------|
 | macOS   | amd64 | [vault-token-helper][latest-binaries] |
 | Linux   | amd64 | [vault-token-helper][latest-binaries] |
 | Windows | amd64 | [vault-token-helper][latest-binaries] |
@@ -73,7 +73,8 @@ Releases are signed using the project GPG key with key-ID `37F9D1272278CD32` and
 gpg --recv-keys 37F9D1272278CD32
 ```
 
-Download and verify the signature on the checksum file:
+[Download](https://github.com/joemiller/vault-token-helper/releases/latest) and verify the signature
+on the checksum file:
 
 ```console
 gpg --verify vault-token-helper_0.2.0_checksums.txt.sig vault-token-helper_0.2.0_checksums.txt
@@ -85,6 +86,8 @@ release artifacts:
 ```console
 shasum --check vault-token-helper_0.2.0_checksums.txt
 ```
+
+macOS binaries are codesign'd.
 
 Usage
 -----
@@ -107,8 +110,10 @@ token_helper = "/install/path/to/vault-token-helper"
 
 ### Configure vault-token-helper
 
-For most installations the defaults should be sufficient. An optional configuration file
-located at `$HOME/.vault-token-helper.yaml` can be used to override the defaults.
+For most installations the defaults should be sufficient.
+
+An optional configuration file located at `$HOME/.vault-token-helper.yaml` can be used to
+override the defaults.
 
 A fully annotated example config file is available in [./vault-token-helper.annotated.yaml](./vault-token-helper.annotated.yaml)
 
@@ -142,6 +147,7 @@ There are a few additional commands:
 
 ```console
 $ vault-token-helper list --extended
+
 VAULT_ADDR                       display_name      ttl         renewable  policies
 ----------                       ------------      ---         ---------  --------
 https://vault-prod.dom.tld:8200  okta-joe@dom.tld  527h46m18s  true       [admin default]
