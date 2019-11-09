@@ -25,6 +25,12 @@ var storeCmd = &cobra.Command{
 			return errors.New("Missing VAULT_ADDR environment variable")
 		}
 
+		vaultNamespace := os.Getenv("VAULT_NAMESPACE")
+		if vaultNamespace != "" {
+			vaultAddr += "/"
+			vaultAddr += vaultNamespace
+		}
+
 		stdin, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			return errors.Wrap(err, "Failed to read token from STDIN")
