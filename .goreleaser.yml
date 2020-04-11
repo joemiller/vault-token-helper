@@ -28,10 +28,10 @@ builds:
       - darwin
     goarch:
       - amd64
+
     # TODO: find a way to codesign from linux and integrate into azure pipelines ci/cd
     # hooks:
     #   post: ./macos-codesign.sh
-
   - binary: vault-token-helper
     id: linux
     ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
@@ -46,14 +46,14 @@ changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
-    - Merge pull request
-    - Merge branch
+      - "^docs:"
+      - "^test:"
+      - Merge pull request
+      - Merge branch
 
 # GPG signing
-sign:
-  artifacts: checksum
+signs:
+  - artifacts: checksum
 
 archives:
   # binary-only releasess - all platforms
