@@ -1,6 +1,6 @@
 #!/bin/bash
 # inputs:
-# - tag, eg: v0.1.1
+# - $TAG, eg: v0.1.1
 #
 # outcome:
 # - download all existing artifacts from the release
