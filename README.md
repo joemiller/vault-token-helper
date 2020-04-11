@@ -133,6 +133,8 @@ secrets store.
 Support for storing tokens from multiple Vault instances is implemented. Change the `VAULT_ADDR`
 environment variable to switch between Vault instances.
 
+The `VAULT_NAMESPACE` environment variable is also supported.
+
 ### Additional commands
 
 The standard `store`, `get`, and `erase` commands are implemented according to the vault token

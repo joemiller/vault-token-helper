@@ -1,5 +1,7 @@
 module github.com/joemiller/vault-token-helper
 
+go 1.14
+
 require (
 	github.com/99designs/keyring v0.0.0-20190704105226-2c916c935b9f
 	github.com/PuerkitoBio/purell v1.1.0
