@@ -12,7 +12,10 @@
 # - upload the shasum signature file
 # - promote release from draft to published
 #
-# requires: gothub - https://github.com/itchio/gothub
+# requires:
+#   - github-release: https://github.com/aktau/github-release
+#   - jq
+#   - gpg
 
 set -eou pipefail
 shopt -s nullglob
@@ -42,7 +45,7 @@ trap 'echo "Cleaning up."; rm -rf -- "$tempdir"' EXIT
 
 echo
 echo "==> Fetching existing release info for $TAG"
-release_info_json=$(gothub info -t "$TAG" -u "$ORG" -r "$REPO" -j)
+release_info_json=$(github-release info -t "$TAG" -u "$ORG" -r "$REPO" -j)
 
 echo
 echo "==> Generating a list of assets"
@@ -57,7 +60,7 @@ echo "==> Downloading assets to: $tempdir"
 pushd "$tempdir" >/dev/null
 for i in "${assets[@]}"; do
   echo "==> Downloading: $i"
-  gothub download -t "$TAG" -u "$ORG" -r "$REPO" -n "$i"
+  github-release download -t "$TAG" -u "$ORG" -r "$REPO" -n "$i"
 done
 ls -l "$tempdir"
 
@@ -101,14 +104,14 @@ echo "==> Re-uploading modified assets"
 #for i in ./*; do
 for i in "${modified_assets[@]}"; do
   echo "==> Uploading: $i"
-  gothub upload -t "$TAG" -u "$ORG" -r "$REPO" -n "$(basename "$i")" -f "$i" --replace
+  github-release upload -t "$TAG" -u "$ORG" -r "$REPO" -n "$(basename "$i")" -f "$i" --replace
 done
 
 echo
 echo "==> Promoting release from draft to published"
 # in order to preserve the current description we must provide it to the edit command:
 description="$(jq -r '.Releases[0].body' <<<"$release_info_json")"
-gothub edit -t "$TAG" -u "$ORG" -r "$REPO" -d "$description"
+github-release edit -t "$TAG" -u "$ORG" -r "$REPO" -d "$description"
 
 echo
 echo "DONE!"
