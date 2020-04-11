@@ -23,6 +23,12 @@ var getCmd = &cobra.Command{
 			return errors.New("Missing VAULT_ADDR environment variable")
 		}
 
+		vaultNamespace := os.Getenv("VAULT_NAMESPACE")
+		if vaultNamespace != "" {
+			vaultAddr += "/"
+			vaultAddr += vaultNamespace
+		}
+
 		token, err := backend.Get(vaultAddr)
 		if err != nil {
 			return err

@@ -22,6 +22,12 @@ var eraseCmd = &cobra.Command{
 			return errors.New("Missing VAULT_ADDR environment variable")
 		}
 
+		vaultNamespace := os.Getenv("VAULT_NAMESPACE")
+		if vaultNamespace != "" {
+			vaultAddr += "/"
+			vaultAddr += vaultNamespace
+		}
+
 		if err := backend.Erase(vaultAddr); err != nil {
 			return err
 		}
