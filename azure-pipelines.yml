@@ -11,7 +11,7 @@ pr: # run pipeline on PRs
 resources:
   containers:
   - container: linux
-    image: golang:1.12
+    image: golang:1.14
     # XXX: hack to install sudo inside the docker container - https://github.com/Microsoft/azure-pipelines-agent/issues/2043
     options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
 
@@ -65,6 +65,15 @@ stages:
         env:
           CI: "true"
         displayName: make test
+
+  - stage: release_test
+    jobs:
+    - job: release_test
+      pool:
+        vmImage: 'ubuntu-16.04' # this is the only pool image that can run linux containers - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&tabs=yaml
+      steps:
+      - script: make snapshot
+        displayName: make snapshot
 
   - stage: release
     jobs:
