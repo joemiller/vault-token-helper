@@ -18,10 +18,11 @@ SHELL
 
   config.vm.provision "shell", inline: "choco install -y git"
   config.vm.provision "shell", inline: "choco install -y golang"
+  config.vm.provision "shell", inline: "choco install -y make"
   config.vm.provision "shell", inline: "choco install -y vault"
 
-  # mount the project into c:\src
-  config.vm.synced_folder "../..", "/src"
+  # mount the project into c:\vault-token-helper
+  config.vm.synced_folder "../..", "/vault-token-helper"
   # TODO: remove below when done using local fork
-  config.vm.synced_folder "../../../keyring", "/keyring"
+  # config.vm.synced_folder "../../../keyring", "/keyring"
 end

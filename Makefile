@@ -2,7 +2,12 @@ deps:
 	@go get
 
 lint:
-	@golangci-lint run -v
+	@golangci-lint run -v --timeout=3m
+	@if command -v goreleaser >/dev/null; then \
+		goreleaser check; \
+	else \
+		echo "goreleaser not installed, skiping goreleaser linting"; \
+	fi
 
 test:
 	@go test -coverprofile=cover.out -v ./...

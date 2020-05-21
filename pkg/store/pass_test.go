@@ -35,7 +35,8 @@ func setup(t *testing.T) (string, func(t *testing.T)) {
 
 	// Create a temporary GPG dir
 	gnupghome := filepath.Join(tmpdir, ".gnupg")
-	os.Mkdir(gnupghome, os.FileMode(int(0700)))
+	err = os.Mkdir(gnupghome, os.FileMode(int(0700)))
+	require.Nil(t, err)
 	os.Setenv("GNUPGHOME", gnupghome)
 	os.Unsetenv("GPG_AGENT_INFO")
 	os.Unsetenv("GPG_TTY")
@@ -85,6 +86,7 @@ func TestPassStore(t *testing.T) {
 
 	// GetAll tokens
 	tokens, err := st.List()
+	assert.Nil(t, err)
 	assert.NotEmpty(t, tokens)
 
 	// Get a token by addr. Mixed case addr should be normalized for a successful lookup

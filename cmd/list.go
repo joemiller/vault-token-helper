@@ -50,12 +50,6 @@ var listCmd = &cobra.Command{
 	},
 }
 
-type lookupResult struct {
-	err    error
-	addr   string
-	secret *vault.Secret
-}
-
 func extendedList() error {
 	wg := &sync.WaitGroup{}
 

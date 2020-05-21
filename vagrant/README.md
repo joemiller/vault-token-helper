@@ -58,9 +58,4 @@ vagrant up
 
 A GUI will open up. Login and open cmd or powershell.
 
-The root of the project will be mounted to `C:\src`
-
-```sh
-cd C:\src
-go test -v .
-```
+The root of the project will be mounted to `C:\vault-token-helper`
