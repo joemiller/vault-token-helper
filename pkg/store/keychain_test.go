@@ -39,6 +39,7 @@ func TestKeychainStore(t *testing.T) {
 
 	// GetAll tokens
 	tokens, err = st.List()
+	assert.Nil(t, err)
 	assert.NotEmpty(t, tokens)
 
 	// Get a token by addr. Mixed case addr should be normalized for a successful lookup

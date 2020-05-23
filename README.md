@@ -1,10 +1,10 @@
 vault-token-helper
 ==================
 
-[![Build Status](https://dev.azure.com/joeym0501/vault-token-helper/_apis/build/status/joemiller.vault-token-helper?branchName=master)](https://dev.azure.com/joeym0501/vault-token-helper/_build/latest?definitionId=1&branchName=master)
+![main](https://github.com/joemiller/vault-token-helper/workflows/main/badge.svg)
 
 A @hashicorp Vault [token helper](https://www.vaultproject.io/docs/commands/token-helper.html) with
-support for native secret storage backends on macOS, Linux, and Windows.
+support for native secret storage on macOS, Linux, and Windows.
 
 Features
 --------
@@ -17,7 +17,30 @@ Supported backends:
 * macOS Keychain
 * Linux (DBus Secret Service compatible backends, eg: Gnome Keyring)
 * Windows (WinCred)
-* [pass](https://www.passwordstore.org/)
+* [pass](https://www.passwordstore.org/) (GPG)
+
+Quickstart (macOS)
+------------------
+
+Install:
+
+    brew install joemiller/taps/vault-token-helper
+
+Configure Vault to use the token helper. This will create the `~/.vault` config file:
+
+    vault-token-helper enable
+
+Authenticate to a Vault instance to encrypt and store a new token locally, for example
+with the Okta auth backend:
+
+    export VAULT_ADDR=https://vault:8200
+    vault login -method=okta username=joe@dom.tld
+
+List stored tokens:
+
+    vault-token-helper list -e
+
+Keep reading for further details and installation methods.
 
 Install
 -------
@@ -56,9 +79,10 @@ Clone this repo and compile for the current architecture:
 make build
 ```
 
-Binaries for all supported platforms are built using the [dockercore/golang-cross](https://github.com/docker/golang-cross)
-image. This is the same image used by the docker cli project. The image makes it possible to
-cross-compile and link to platform-specific libraries such as the OSX SDK on macOS:
+Binaries for all supported platforms are built using the
+[dockercore/golang-cross](https://github.com/docker/golang-cross) image. This is the same image used
+by the docker cli project for cross-compiling and linking with platform-specific libraries such
+as macOS' Keychain and Windows' WinCred.
 
 ```sh
 make snapshot
@@ -122,7 +146,7 @@ A fully annotated example config file is available in [./vault-token-helper.anno
 Set `VAULT_ADDR` to the URL of your Vault instance and run `vault` commands like normal. For example,
 to login and store a token on a Vault instance with the Okta auth plugin enabled:
 
-```sh
+```console
 export VAULT_ADDR=https://vault:8200
 vault login -method=okta username=joe@dom.tld
 ```
@@ -181,10 +205,10 @@ The most complete way to run all tests would be to run `make test` under each pl
 
 ### CI/CD
 
-Azure DevOps Pipelines is used for CI and CD because it provides support for macos, windows,
-and linux.
+[Github Actions](https://github.com/joemiller/vault-token-helper/actions) is used for CI/CD.
 
-Tests are run on pull requests and releases are generated on successful master branch builds.
+Tests are run on pull requests and versioned releases are generated on all successful master branch
+builds.
 
 ### Release Management
 
@@ -234,5 +258,4 @@ TODO
 * ci/cd:
   * [x] `sign` checksum.txt and assets in goreleaser.yaml GPG key
   * [ ] apple `codesign` the macos binaries
-  * [ ] figure out how to cache go modules in azure pipelines, using this task maybe - https://github.com/microsoft/azure-pipelines-artifact-caching-tasks
   * [ ] linux tests, figure out how to test dbus secret-service in headless CI. probably need a stub to connect to Dbus and provide the 'prompt' service

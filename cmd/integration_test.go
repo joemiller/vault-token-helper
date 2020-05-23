@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/joemiller/vault-token-helper/cmd"
 	"github.com/stretchr/testify/assert"
 )
@@ -80,6 +79,9 @@ func TestGetCmd_Match(t *testing.T) {
 	stdin := ""
 	env := []string{"VAULT_ADDR=https://foo.bar:8200"}
 	stdout, stderr, err := execCmd(env, stdin, "get")
+	assert.Nil(t, err) // vault-token-helper should exit 0 if no token is stored for the $VAULT_ADDR
+	assert.Equal(t, "", stdout)
+	assert.Equal(t, "", stderr)
 
 	stdin = "token-foo"
 	_, _, err = execCmd(env, stdin, "store")
@@ -88,6 +90,9 @@ func TestGetCmd_Match(t *testing.T) {
 
 	stdout, stderr, err = execCmd(env, "", "get")
 	assert.Nil(t, err)
-	spew.Dump(stdout)
-	spew.Dump(stderr)
+	// spew.Dump(stdout)
+	// spew.Dump(stderr)
+	assert.Nil(t, err) // vault-token-helper should exit 0 if no token is stored for the $VAULT_ADDR
+	assert.Equal(t, "token-foo", stdout)
+	assert.Equal(t, "", stderr)
 }

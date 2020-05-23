@@ -101,14 +101,14 @@ nfpms:
       - rpm
     overrides:
       rpm:
-        name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
+        file_name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
         replacements:
           amd64: x86_64
           386: i686
           arm: armhfp
           arm64: aarch64
       deb:
-        name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+        file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
         replacements:
           386: i386
           arm: armel
