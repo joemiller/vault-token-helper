@@ -6,7 +6,6 @@ require (
 	github.com/99designs/keyring v0.0.0-20190704105226-2c916c935b9f
 	github.com/PuerkitoBio/purell v1.1.0
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/vault/api v1.0.2
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -14,7 +13,6 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.3.0
-	google.golang.org/appengine v1.4.0 // indirect
 )
 
 // replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => ../keyring
