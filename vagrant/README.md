@@ -14,14 +14,14 @@ Using
 1. Install vagrant
 2. Install vagrant plugins:
 
-```sh
+```
 vagrant plugin install vagrant-vbguest
 vagrant plugin install vagrant-reload
 ```
 
 **Launch**:
 
-```sh
+```
 cd vagrant/fedora
 vagrant up
 ```
@@ -32,12 +32,14 @@ to install all the packages and reboot at least once. You may want to use
 `vagrant halt` instead of `destroy` to suspend the VM until you're done
 with dev/test.
 
-The root of the project will be mounted as a host folder to `/src`.
+The root of the project will be mounted as a host folder to `/vault-token-helper`.
 
 Run tests from an SSH or GUI Terminal session in the fedora VM:
 
-```sh
-cd /src
+```
+cd /vault-token-helper
+make test
+# or:
 go test -v ./...
 ```
 
@@ -49,7 +51,7 @@ go test -v ./...
 
 **Launch**:
 
-```sh
+```
 cd vagrant/windows
 vagrant up
 ```

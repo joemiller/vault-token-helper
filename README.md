@@ -239,14 +239,7 @@ $ GPG_KEY="$(cat vault-token-helper.signing-key.gpg | base64)" make snapshot
 #### Apple codesign
 
 In order to avoid macOS keychain from always prompting for passwords the macOS binaries
-are codesigned with a cert issued by Apple. Unfortunately this can't be done easily in CI
-while still being able to leverage all the advantages of [goreleaser](https://goreleaser.com/).
-This will hopefully change one day when there is a `codesign` compatible binary available
-for Linux.
-
-In the meantime, all releases pushed by CI are created as draft releases. In order to promote
-a release, run `make sign-and-promote-release TAG=vX.Y.Z` from a macOS system with both the
-project GPG key and an apple code signing cert available.
+are codesigned with a cert issued by Apple.
 
 TODO
 ----
@@ -257,5 +250,5 @@ TODO
 * [x] add a flag like `--extended` to `list` that will query vault for additional token info, eg: valid/invalid, ttl, policies
 * ci/cd:
   * [x] `sign` checksum.txt and assets in goreleaser.yaml GPG key
-  * [ ] apple `codesign` the macos binaries
+  * [x] apple `codesign` the macos binaries
   * [ ] linux tests, figure out how to test dbus secret-service in headless CI. probably need a stub to connect to Dbus and provide the 'prompt' service

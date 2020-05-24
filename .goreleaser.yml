@@ -4,6 +4,19 @@ env:
   - GOPROXY=https://proxy.golang.org
 builds:
   - binary: vault-token-helper
+    id: macos
+    ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    hooks:
+      post: ./scripts/macos-codesign.sh "{{ .Path }}"
+
+  # cross-compile windows binary
+  - binary: vault-token-helper
     id: windows
     ldflags:
       - -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
@@ -17,26 +30,17 @@ builds:
     goarch:
       - amd64
 
-  - binary: vault-token-helper
-    id: macos
-    ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
-    env:
-      - CGO_ENABLED=1
-      - CC=o64-clang
-      - CXX=o64-clang++
-    goos:
-      - darwin
-    goarch:
-      - amd64
-
-    # TODO: find a way to codesign from linux and integrate into azure pipelines ci/cd
-    # hooks:
-    #   post: ./macos-codesign.sh
+  # cross-compile static linux bin on macos using https://github.com/FiloSottile/homebrew-musl-cross
+  #   brew install FiloSottile/musl-cross/musl-cross
   - binary: vault-token-helper
     id: linux
-    ldflags: -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+    ldflags:
+      - -s -w -X github.com/joemiller/vault-token-helper/cmd.version={{.Version}}+{{.ShortCommit}}
+      - "-linkmode external -extldflags '-static'"
     env:
       - CGO_ENABLED=1
+      - CC=x86_64-linux-musl-gcc
+      - CXX=x86_64-linux-musl-g++
     goos:
       - linux
     goarch:

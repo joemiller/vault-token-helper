@@ -1,12 +1,6 @@
 name: main
 on: [push, pull_request]
 
-# TODO: implement support for [skip ci], https://timheuer.com/blog/skipping-ci-github-actions-workflows/
-# TODO: bonus: can we achiever apple codesigning in CI and remove the local script step?
-# TODO: update CI/CD section in readme to remove azure refs
-# TODO: switch readme CI badge to github actions
-# TODO: document autotag git branch+tags stuff in autotag README
-
 jobs:
   lint:
     strategy:
@@ -80,7 +74,7 @@ jobs:
     needs: [lint, test]
     # don't waste time running a goreleaser test build on master since we will run a full release:
     if: github.ref != 'refs/heads/master'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -90,15 +84,33 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: install go deps
-        run: make deps
+
+      - uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CODESIGN_CERTIFICATES_P12 }}
+          p12-password: ${{ secrets.APPLE_CODESIGN_CERTIFICATES_PASSWORD }}
+
+      - name: import GPG signing key
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: |
+          echo "$GPG_KEY" \
+            | base64 --decode \
+            | gpg --batch --allow-secret-key-import --import
+          gpg --keyid-format LONG --list-secret-keys
+
+      - name: install release deps
+        run: |
+          brew install goreleaser/tap/goreleaser
+          brew install FiloSottile/musl-cross/musl-cross
+
       - run: make snapshot
 
   release:
     needs: [lint, test]
     # only create a release on master builds:
     if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -108,6 +120,21 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CODESIGN_CERTIFICATES_P12 }}
+          p12-password: ${{ secrets.APPLE_CODESIGN_CERTIFICATES_PASSWORD }}
+
+      - name: import GPG signing key
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: |
+          echo "$GPG_KEY" \
+            | base64 --decode \
+            | gpg --batch --allow-secret-key-import --import
+          gpg --keyid-format LONG --list-secret-keys
+
       - name: Unshallow
         run: |
           # fetch all tags and history so that goreleaser can generate a proper changelog
@@ -118,21 +145,20 @@ jobs:
             # ensure a local 'master' branch exists for autotag to work correctly:
             git branch --track master origin/master
           fi
-      - name: install go deps
-        run: make deps
 
-      - name: install autotag
+      - name: install release deps
         run: |
-          curl -sL https://git.io/autotag-install | sudo sh -s -- -b /usr/local/bin
+          brew install goreleaser/tap/goreleaser
+          brew install FiloSottile/musl-cross/musl-cross
 
       - name: run autotag to increment version
         run: |
+          curl -sL https://git.io/autotag-install | sudo sh -s -- -b /usr/local/bin
           autotag
 
       - name: build and push release artifacts
         env:
           GITHUB_TOKEN: ${{ secrets.BREW_GITHUB_TOKEN }}
-          # GPG_KEY contents must be base64 encoded:
-          GPG_KEY: ${{ secrets.GPG_KEY }}
         run: |
+          make deps
           make release
