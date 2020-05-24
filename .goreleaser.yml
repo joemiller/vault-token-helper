@@ -81,9 +81,10 @@ brews:
     homepage: "https://github.com/joemiller/vault-token-helper"
     description: "Cross-platform @hashicorp Vault token helper"
     caveats: |
-      Run this to create the ~/.vault file. This will instruct vault to use the token helper:
+      Run this to create the ~/.vault file. This will configure vault to use the token helper:
 
         vault-token-helper enable
+
     dependencies:
       - vault
 
