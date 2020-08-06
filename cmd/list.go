@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"sync"
 	"text/tabwriter"
 	"time"
@@ -58,6 +59,11 @@ func extendedList() error {
 		return errors.Wrap(err, "Failed to read tokens from backend storage")
 	}
 
+	re, err := regexp.Compile(`^(http[s]?://[^:/\s]+)/?(.*)$`)
+	if err != nil {
+		return errors.Wrap(err, "Failed to compile regexp for vault address")
+	}
+
 	// fan-out parallel token lookups, fan-in to result channels. Output and Error
 	// channels are rendered separately to ensure correct aligntment in the outputted table
 	w := &tabwriter.Writer{}
@@ -85,11 +91,15 @@ func extendedList() error {
 			vcfg := vault.DefaultConfig() // VAULT_ env vars
 			vcfg.Timeout = 5 * time.Second
 			vcfg.MaxRetries = 1
-			vcfg.Address = addr
+			addrSlice := re.FindStringSubmatch(addr)
+			vcfg.Address = addrSlice[1]
 			client, err := vault.NewClient(vcfg)
 			if err != nil {
 				errCh <- fmt.Errorf("%s\t** ERROR **\t%s", addr, err)
 				return
+			}
+			if addrSlice[2] != "" {
+				client.SetNamespace(addrSlice[2])
 			}
 			client.SetToken(token.Token)
 			s, err := client.Auth().Token().LookupSelf()
