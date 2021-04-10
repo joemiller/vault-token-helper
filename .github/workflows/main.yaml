@@ -20,9 +20,8 @@ jobs:
       - name: install golangci-lint
         run: |
           mkdir -p "$HOME/bin"
-          # TODO: remove golangci-lint pin when release issue is fixed: https://github.com/golangci/golangci-lint/issues/1157
-          curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "$HOME/bin" v1.26.0
-          echo "::add-path::$HOME/bin"
+          curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "$HOME/bin"
+          echo "$HOME/bin" >> $GITHUB_PATH
         shell: bash # force windows to use git-bash for access to curl
 
       - name: install goreleaser
@@ -78,12 +77,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      - uses: actions/cache@v1
+
+      - name: go mod cache
+        uses: actions/cache@v1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - name: Homebrew musl-cross cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/musl-cross--*
+            ~/Library/Caches/Homebrew/downloads/*--musl-cross-*
+          key: brew-musl-cross-${{ hashFiles('~/Library/Caches/Homebrew/downloads/*--musl-cross-*') }}
+          restore-keys: brew-musl-cross-
 
       - uses: apple-actions/import-codesign-certs@v1
         with:
@@ -101,7 +111,10 @@ jobs:
 
       - name: install release deps
         run: |
-          brew install goreleaser/tap/goreleaser
+          # install goreleaser binary directly, don't use brew because brew will bring in its own
+          # version of go which will cause issues with the version installed by the 'setup-go' action:
+          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+
           brew install FiloSottile/musl-cross/musl-cross
 
       - run: make snapshot
@@ -114,12 +127,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      - uses: actions/cache@v1
+
+      - name: go mod cache
+        uses: actions/cache@v1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - name: Homebrew musl-cross cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/musl-cross--*
+            ~/Library/Caches/Homebrew/downloads/*--musl-cross-*
+          key: brew-musl-cross-${{ hashFiles('~/Library/Caches/Homebrew/downloads/*--musl-cross-*') }}
+          restore-keys: brew-musl-cross-
 
       - uses: apple-actions/import-codesign-certs@v1
         with:
@@ -148,7 +172,10 @@ jobs:
 
       - name: install release deps
         run: |
-          brew install goreleaser/tap/goreleaser
+          # install goreleaser binary directly, don't use brew because brew will bring in its own
+          # version of go which will cause issues with the version installed by the 'setup-go' action:
+          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+
           brew install FiloSottile/musl-cross/musl-cross
 
       - name: run autotag to increment version

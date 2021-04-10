@@ -75,7 +75,7 @@ archives:
 brews:
   - ids:
       - archives
-    github:
+    tap:
       owner: joemiller
       name: homebrew-taps
     commit_author:

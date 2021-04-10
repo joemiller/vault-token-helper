@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"sync"
 	"text/tabwriter"
@@ -85,12 +86,29 @@ func extendedList() error {
 			vcfg := vault.DefaultConfig() // VAULT_ env vars
 			vcfg.Timeout = 5 * time.Second
 			vcfg.MaxRetries = 1
-			vcfg.Address = addr
+
+			// XXX: We store the VAULT_ADDR + VAULT_NAMESPACE in the credential store as a single
+			// string, eg:
+			//
+			//   VAULT_ADDR=https://vault:8200  VAULT_NAMESPACE=foo is stored as "https://vault:8200/foo"
+			//
+			// But this is not a valid VAULT_ADDR. To workaround this we parse the string and assume
+			// a Path element is the VAULT_NAMESPACE.
+			parsedURL, err := url.Parse(addr)
+			if err != nil {
+				errCh <- fmt.Errorf("%s\t** ERROR **\t%s", addr, err)
+				return
+			}
+			vcfg.Address = fmt.Sprintf("%s://%s", parsedURL.Scheme, parsedURL.Host)
+			namespace := parsedURL.Path
+
 			client, err := vault.NewClient(vcfg)
 			if err != nil {
 				errCh <- fmt.Errorf("%s\t** ERROR **\t%s", addr, err)
 				return
 			}
+			client.SetNamespace(namespace)
+
 			client.SetToken(token.Token)
 			s, err := client.Auth().Token().LookupSelf()
 			if err != nil {
