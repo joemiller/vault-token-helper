@@ -29,7 +29,7 @@ builds:
       - windows
     goarch:
       - amd64
-
+github
   # cross-compile static linux bin on macos using https://github.com/FiloSottile/homebrew-musl-cross
   #   brew install FiloSottile/musl-cross/musl-cross
   - binary: vault-token-helper
@@ -75,7 +75,7 @@ archives:
 brews:
   - ids:
       - archives
-    github:
+    tap:
       owner: joemiller
       name: homebrew-taps
     commit_author:

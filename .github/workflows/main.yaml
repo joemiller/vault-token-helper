@@ -20,9 +20,8 @@ jobs:
       - name: install golangci-lint
         run: |
           mkdir -p "$HOME/bin"
-          # TODO: remove golangci-lint pin when release issue is fixed: https://github.com/golangci/golangci-lint/issues/1157
-          curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "$HOME/bin" v1.26.0
-          echo "::add-path::$HOME/bin"
+          curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "$HOME/bin"
+          echo "$HOME/bin" >> $GITHUB_PATH
         shell: bash # force windows to use git-bash for access to curl
 
       - name: install goreleaser
