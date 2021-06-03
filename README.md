@@ -36,7 +36,14 @@ with the Okta auth backend:
     export VAULT_ADDR=https://vault:8200
     vault login -method=okta username=joe@dom.tld
 
-List stored tokens:
+Or to store an existing token:
+
+    export VAULT_ADDR=https://vault:8200
+    vault login
+
+    Token (will be hidden): <paste token>
+
+List saved tokens with extended status output:
 
     vault-token-helper list -e
 
@@ -75,62 +82,60 @@ Install
 
 Clone this repo and compile for the current architecture:
 
-```sh
-make build
-```
-
-Binaries for all supported platforms are built using the
-[dockercore/golang-cross](https://github.com/docker/golang-cross) image. This is the same image used
-by the docker cli project for cross-compiling and linking with platform-specific libraries such
-as macOS' Keychain and Windows' WinCred.
-
-```sh
-make snapshot
-```
+    make build
 
 ### Verifying releases
 
-Releases are signed using the project GPG key with key-ID `37F9D1272278CD32` and fingerprint
-`5EF2 2550 7053 ACC2 728A  A51C 37F9 D127 2278 CD32`. The key can be fetched from most keyservers.
+macOS binaries are CodeSign'd with a certificate from Apple.
 
-```console
-gpg --recv-keys 37F9D1272278CD32
-```
+Additionally all releases are signed using this project's GPG key:
+
+* Subject: `vault-token-helper (github.com/joemiller/vault-token-helper project key) <vault-token-helper@joemiller.me>`
+* key-ID `37F9D1272278CD32`
+* fingerprint `5EF2 2550 7053 ACC2 728A  A51C 37F9 D127 2278 CD32`.
+
+The key can be fetched from most keyservers:
+
+    gpg --recv-keys 37F9D1272278CD32
 
 [Download](https://github.com/joemiller/vault-token-helper/releases/latest) and verify the signature
 on the checksum file:
 
-```console
-gpg --verify vault-token-helper_0.2.0_checksums.txt.sig vault-token-helper_0.2.0_checksums.txt
-```
+    gpg --verify vault-token-helper_0.2.0_checksums.txt.sig vault-token-helper_0.2.0_checksums.txt
 
-After verifying the checksum file signature use `shasum` to verify the checksums of the
+After verifying the checksum file's signature use `shasum` to verify the checksums of the
 release artifacts:
 
-```console
-shasum --check vault-token-helper_0.2.0_checksums.txt
-```
-
-macOS binaries are codesign'd.
+    shasum --check vault-token-helper_0.2.0_checksums.txt
 
 Usage
 -----
+
+### Pre-Reqs
+
+`vault-token-helper` will attempt to detect the best available token storage backend.
+On macOS this will be the Keychain app, on Windows the native credential store, and
+on most Linux distros the DBus Secret-Service API (common packages implementing this are
+Gnome Keyring and Seahorse).
+
+You may need to install a compatible credential storage service on Linux. For example,
+on Arch Linux with a vanilla desktop you may need to install `gnome-keyring`.
+
+Alternatively, the cross-platform, GPG-based [pass](https://www.passwordstore.org/)
+utility can also be used. You must initialize `pass` (`pass init`) with a GPG key before
+using `vault-token-helper`.
 
 ### Configure Vault
 
 Install `vault-token-helper` then run:
 
-```console
-vault-token-helper enable
-```
+    vault-token-helper enable
 
 This creates (overwrites) the `$HOME/.vault` config file used by the `vault` CLI.
 
 Alternatively, edit the file and specify the full path to the `vault-token-helper` binary:
 
-```toml
-token_helper = "/install/path/to/vault-token-helper"
-```
+    token_helper = "/install/path/to/vault-token-helper"
 
 ### Configure vault-token-helper
 
@@ -146,10 +151,12 @@ A fully annotated example config file is available in [./vault-token-helper.anno
 Set `VAULT_ADDR` to the URL of your Vault instance and run `vault` commands like normal. For example,
 to login and store a token on a Vault instance with the Okta auth plugin enabled:
 
-```console
-export VAULT_ADDR=https://vault:8200
-vault login -method=okta username=joe@dom.tld
-```
+    VAULT_ADDR=https://vault:8200 vault login -method=okta username=joe@dom.tld
+
+Or to store an existing token:
+
+    $ VAULT_ADDR=https://vault:8200 vault login
+    Token (will be hidden): <paste token>
 
 Upon successful authentication the Vault token will be stored securely in the platform's
 secrets store.
@@ -168,7 +175,7 @@ There are a few additional commands:
 
 * `enable`: Enable the vault-token-helper by (over)writing the ~/.vault config file.
 * `backends`: List the available secret storage backends on the current platform.
-* `list`: List tokens. Add `--extended` flag to lookup additional details about the stored
+* `list`: List tokens. Add `--extended/-e` flag to lookup additional details about the stored
     token by quering the Vault instance's token lookup API.
 
 ```console
@@ -186,6 +193,10 @@ Support
 
 Please open a GitHub [issue](https://github.com/joemiller/vault-token-helper/issues).
 
+Setting the `KEYRING_DEBUG` environment variable to any value will produce additional output
+that may be useful for debugging common issues. Please set this variable and then
+run a command such as `vault-token-helper list`. Include the debug output in your issue.
+
 Development
 -----------
 
@@ -201,7 +212,7 @@ due to interactive elements such as password prompts. To aid in development ther
 VMs with GUIs enabled in the `./vagrant/` directory. See the
 [./vagrant/README.md](./vagrant/README.md) for further details.
 
-The most complete way to run all tests would be to run `make test` under each platform.
+The most complete way to run all tests would be to run `make test` under each platform (macOS, Linux, Windows).
 
 ### CI/CD
 
@@ -209,6 +220,9 @@ The most complete way to run all tests would be to run `make test` under each pl
 
 Tests are run on pull requests and versioned releases are generated on all successful master branch
 builds.
+
+Some tests are not run in CI/CD due to requiring an interactive desktop such as the Linux
+DBus Secret Service backend.
 
 ### Release Management
 

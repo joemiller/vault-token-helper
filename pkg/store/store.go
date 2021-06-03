@@ -2,6 +2,7 @@ package store
 
 import (
 	"net/url"
+	"os"
 
 	"github.com/99designs/keyring"
 	"github.com/PuerkitoBio/purell"
@@ -30,6 +31,10 @@ var SupportedBackends = []keyring.BackendType{
 
 // New creates a new Store from a keyring.Config
 func New(cfg keyring.Config) (*Store, error) {
+	if os.Getenv("KEYRING_DEBUG") != "" {
+		keyring.Debug = true
+	}
+
 	kr, err := keyring.Open(cfg)
 	if err != nil {
 		return nil, err

@@ -106,8 +106,13 @@ func initBackend() error {
 		WinCredPrefix: cfg.WinCred.Prefix,
 	}
 
+	// rename the default backendtype to 'automatic' to make potential error messages more useful:
+	if cfg.BackendType == "" {
+		cfg.BackendType = "automatic"
+	}
+
 	switch cfg.BackendType {
-	case "automatic", "":
+	case "automatic":
 		storeCfg.AllowedBackends = store.SupportedBackends
 	case "keychain":
 		storeCfg.AllowedBackends = []keyring.BackendType{keyring.KeychainBackend}

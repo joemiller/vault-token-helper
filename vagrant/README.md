@@ -43,6 +43,9 @@ make test
 go test -v ./...
 ```
 
+> If you run the tests via ssh you need to login to the web UI first in order for
+> the gnome keyring service to start first.
+
 ### Windows 10
 
 **Pre-Reqs:**
