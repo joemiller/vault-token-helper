@@ -21,6 +21,22 @@ func TestMain(m *testing.M) {
 	}
 }
 
+// getEnv returns a copy of the process's current environment with any VAULT_*
+// env vars removed. This function exists because we need a copy of the processes
+// environment on certain platforms. For example, to run these tests on Linux
+// we need a copy of the DBUS_SESSION_BUS_ADDRESS env var in order to access the
+// gnome keyring.
+func getEnv() []string {
+	env := os.Environ()
+	newEnv := []string{}
+	for _, i := range env {
+		if !strings.HasPrefix(i, "VAULT_") {
+			newEnv = append(newEnv, i)
+		}
+	}
+	return newEnv
+}
+
 // execCmd executes the vault-token-helper with the provides args and returns
 // stdout, stderr, and error.
 // execCommand("list", "--debug") would be similar to executing the compiled program "vault-token-helper list --debug"
@@ -47,7 +63,7 @@ func TestGetCmd_MissingVAULT_ADDR(t *testing.T) {
 	}
 
 	stdin := ""
-	env := []string{}
+	env := getEnv()
 	stdout, stderr, err := execCmd(env, stdin, "get")
 
 	assert.NotNil(t, err) // vault-token-helper should exit non-zero when VAULT_ADDR is not set
@@ -62,7 +78,8 @@ func TestGetCmd_NoMatch(t *testing.T) {
 	}
 
 	stdin := ""
-	env := []string{"VAULT_ADDR=https://foo.bar:8200"}
+	env := getEnv()
+	env = append(env, "VAULT_ADDR=https://foo.bar:8200")
 	stdout, stderr, err := execCmd(env, stdin, "get")
 
 	assert.Nil(t, err) // vault-token-helper should exit 0 if no token is stored for the $VAULT_ADDR
@@ -77,7 +94,8 @@ func TestGetCmd_Match(t *testing.T) {
 	}
 
 	stdin := ""
-	env := []string{"VAULT_ADDR=https://foo.bar:8200"}
+	env := getEnv()
+	env = append(env, "VAULT_ADDR=https://foo.bar:8200")
 	stdout, stderr, err := execCmd(env, stdin, "get")
 	assert.Nil(t, err) // vault-token-helper should exit 0 if no token is stored for the $VAULT_ADDR
 	assert.Equal(t, "", stdout)
