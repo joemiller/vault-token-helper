@@ -13,7 +13,8 @@ import (
 
 func TestSecretServiceStore(t *testing.T) {
 	// TODO: get this working in CI. The current blocker is needing to have a dbus prompter service that
-	// can be driven automatically and headless.
+	// can be driven automatically and headless:
+	// https://github.com/99designs/keyring/blob/d9b6b92e219ff56ce753cf84d4956f823d431651/libsecret_test.go#L13-L22
 	if os.Getenv("CI") != "" {
 		t.Skip("Skipping testing in CI environment")
 	}
