@@ -27,7 +27,10 @@ jobs:
       - name: install goreleaser
         # only need to lint goreleaser on one platform:
         if: startsWith(runner.os, 'Linux')
-        run: curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sudo sh -s -- -b /usr/local/bin
+        run : |
+          #curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sudo sh -s -- -b /usr/local/bin
+          curl -sfL https://github.com/goreleaser/goreleaser/releases/download/v0.183.0/goreleaser_Linux_x86_64.tar.gz | tar -xvzf - goreleaser
+          sudo mv goreleaser /usr/local/bin
 
       - name: make lint
         env:
@@ -113,7 +116,9 @@ jobs:
         run: |
           # install goreleaser binary directly, don't use brew because brew will bring in its own
           # version of go which will cause issues with the version installed by the 'setup-go' action:
-          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+          #curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+          curl -sfL https://github.com/goreleaser/goreleaser/releases/download/v0.183.0/goreleaser_Darwin_all.tar.gz | tar -xvzf - goreleaser
+          mv goreleaser /usr/local/bin
 
           brew install FiloSottile/musl-cross/musl-cross
 
@@ -174,7 +179,9 @@ jobs:
         run: |
           # install goreleaser binary directly, don't use brew because brew will bring in its own
           # version of go which will cause issues with the version installed by the 'setup-go' action:
-          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+          #curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | bash -s -- -b /usr/local/bin
+          curl -sfL https://github.com/goreleaser/goreleaser/releases/download/v0.183.0/goreleaser_Darwin_all.tar.gz | tar -xvzf - goreleaser
+          mv goreleaser /usr/local/bin
 
           brew install FiloSottile/musl-cross/musl-cross
 
