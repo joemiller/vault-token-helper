@@ -1,6 +1,6 @@
 module github.com/joemiller/vault-token-helper
 
-go 1.16
+go 1.17
 
 require (
 	github.com/99designs/keyring v0.0.0-20190704105226-2c916c935b9f
