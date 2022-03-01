@@ -218,7 +218,7 @@ The most complete way to run all tests would be to run `make test` under each pl
 
 [Github Actions](https://github.com/joemiller/vault-token-helper/actions) is used for CI/CD.
 
-Tests are run on pull requests and versioned releases are generated on all successful master branch
+Tests are run on pull requests and versioned releases are generated on all successful main branch
 builds.
 
 Some tests are not run in CI/CD due to requiring an interactive desktop such as the Linux
@@ -226,12 +226,12 @@ DBus Secret Service backend.
 
 ### Release Management
 
-Releases are cut automatically on all successful master branch builds. This project uses
+Releases are cut automatically on all successful main branch builds. This project uses
 [autotag](https://github.com/pantheon-systems/autotag) and [goreleaser](https://goreleaser.com/) to
 automate this process.
 
 Semver (`vMajor.Minor.Patch`) is used for versioning and releases. By default, autotag will bump the
-patch version on a successful master build, eg: `v1.0.0` -> `v1.0.1`.
+patch version on a successful main build, eg: `v1.0.0` -> `v1.0.1`.
 
 To bump the major or minor release instead, include `[major]` or `[minor]` in the commit message.
 Refer to the autotag [docs](https://github.com/pantheon-systems/autotag#incrementing-major-and-minor-versions)
