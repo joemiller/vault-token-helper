@@ -27,7 +27,7 @@ jobs:
       - name: install goreleaser
         # only need to lint goreleaser on one platform:
         if: startsWith(runner.os, 'Linux')
-        run : |
+        run: |
           #curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sudo sh -s -- -b /usr/local/bin
           curl -sfL https://github.com/goreleaser/goreleaser/releases/download/v0.183.0/goreleaser_Linux_x86_64.tar.gz | tar -xvzf - goreleaser
           sudo mv goreleaser /usr/local/bin
@@ -74,8 +74,8 @@ jobs:
 
   release-test:
     needs: [lint, test]
-    # don't waste time running a goreleaser test build on master since we will run a full release:
-    if: github.ref != 'refs/heads/master'
+    # don't waste time running a goreleaser test build on main since we will run a full release:
+    if: github.ref != 'refs/heads/main'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -126,8 +126,8 @@ jobs:
 
   release:
     needs: [lint, test]
-    # only create a release on master builds:
-    if: github.ref == 'refs/heads/master'
+    # only create a release on main builds:
+    if: github.ref == 'refs/heads/main'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -170,9 +170,9 @@ jobs:
           # and autotag can calculate the next version tag:
           git fetch --tags --unshallow --prune
 
-          if [ $(git rev-parse --abbrev-ref HEAD) != "master" ]; then
-            # ensure a local 'master' branch exists for autotag to work correctly:
-            git branch --track master origin/master
+          if [ $(git rev-parse --abbrev-ref HEAD) != "main" ]; then
+            # ensure a local 'main' branch exists for autotag to work correctly:
+            git branch --track main origin/main
           fi
 
       - name: install release deps
