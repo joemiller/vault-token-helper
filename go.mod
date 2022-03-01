@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/99designs/keyring v0.0.0-20190704105226-2c916c935b9f
-	github.com/PuerkitoBio/purell v1.1.0
+	github.com/PuerkitoBio/purell v1.1.1
 	github.com/hashicorp/vault/api v1.0.2
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mitchellh/go-homedir v1.1.0
