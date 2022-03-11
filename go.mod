@@ -9,7 +9,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.8.0
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.3.0
 )
@@ -42,14 +42,14 @@ require (
 	github.com/spf13/afero v1.1.2 // indirect
 	github.com/spf13/cast v1.3.0 // indirect
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect
-	github.com/spf13/pflag v1.0.3 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
 	golang.org/x/text v0.3.2 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
 	gopkg.in/square/go-jose.v2 v2.3.1 // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => ../keyring
