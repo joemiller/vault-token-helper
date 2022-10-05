@@ -6,8 +6,6 @@
 ##    Valid values:
 ##     - automatic (default)
 ##     - keychain
-##     - secret-service
-##     - wincred
 ##     - pass
 # backend: automatic
 
