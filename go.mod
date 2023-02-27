@@ -11,7 +11,7 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
@@ -50,6 +50,7 @@ require (
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
 	gopkg.in/square/go-jose.v2 v2.3.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 // replace github.com/99designs/keyring v0.0.0-20190531235905-2e3b4e59b02e => ../keyring
